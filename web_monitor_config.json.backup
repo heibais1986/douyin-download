@@ -1,0 +1,41 @@
+{
+  "check_interval": 300,
+  "download_path": "./下载",
+  "cookie": "gd_random=eyJtYXRjaCI6ZmFsc2UsInBlcmNlbnQiOjAuOTE1MDQ3NjIxMjY3ODEzNH0=.ayobDL+EtKe9Z4KTuqI9XdwcKAseMu4OWazu9kL37uE=; enter_pc_once=1; UIFID_TEMP=d4579b5b1721ffdd22d8a6ff378781159e3b4e5a1248a83fc8c708ec2606b705ccd7d238b3e4666f0c5ab38938160692b30033aa7aa47c45bb6d2e393d2c8df91d6690b9eed9e763f7d2a47d8418fd001b382880d4e374342d53939490b04ab9826007427bacc9ab3ccb3d9ac9597c1c; s_v_web_id=verify_mdtmdgd9_gEgbuPnr_XYKZ_4zPG_98oC_NaJxbK8VZq0j; hevc_supported=true; dy_swidth=1280; dy_sheight=720; fpk1=U2FsdGVkX18451K1XRxW5MmqpjQCxMtnnaPy9IZ00kfvGewRFPHNea+dDDgnZ0Nv6VXnW/B060S5Tm+2FOxATA==; fpk2=d2ad6785d256851dd366703bdc61aa61; bd_ticket_guard_client_web_domain=2; passport_csrf_token=0c8b48893258ebe0ba2690260388f9ca; passport_csrf_token_default=0c8b48893258ebe0ba2690260388f9ca; __security_mc_1_s_sdk_crypt_sdk=1fdc4812-49ab-9b1a; UIFID=d4579b5b1721ffdd22d8a6ff378781159e3b4e5a1248a83fc8c708ec2606b705ccd7d238b3e4666f0c5ab38938160692b30033aa7aa47c45bb6d2e393d2c8df9338b1d47da92b9243543f9cf95e9fa77483d193e886f00cbd5e6bfb4564004d4529e5b5ace53c3b50b840187c42195f4b36b6ce2e11935f14f5e895c2e4f4f3df319aa8761d7de38a2b8254fe91e13a50258b09aa70e12df118a9469f564a9629b4d08cc96d5272f798b716c92278a7f6efa08f23af7f1d39faa0e4a7fb700da; strategyABtestKey=%221754100956.204%22; is_dash_user=1; passport_assist_user=CkFAGn090zIvkfeym7mVgkhwDJSy_ABl2wmW84cNamX5z6M_yCbuvbUcaEVeOWeSzvsQhMr2OAC_qCbmvV7HH6ybyBpKCjwAAAAAAAAAAAAAT02-7A3yY3WlkkZwZwjT-FNRI7aySrCpeORI26tnLewFge1EctqTXcwvj5bBxMikyIIQvqz4DRiJr9ZUIAEiAQN11DvS; n_mh=IVs8xxNG_rrRorlEz3vua016x9GdeOoi1mrL4rxWVV8; sid_guard=623755489538351f779706dc0e0bd50a%7C1754100972%7C5184000%7CWed%2C+01-Oct-2025+02%3A16%3A12+GMT; uid_tt=40b7e8863beaa0317aec43d986428a4f; uid_tt_ss=40b7e8863beaa0317aec43d986428a4f; sid_tt=623755489538351f779706dc0e0bd50a; sessionid=623755489538351f779706dc0e0bd50a; sessionid_ss=623755489538351f779706dc0e0bd50a; session_tlb_tag=sttt%7C8%7CYjdVSJU4NR93lwbcDgvVCv________-qCdjc-ISIp4_Y7X3rd8YrdtJwtyWsdW0UTXWCRl3Y7Xw%3D; is_staff_user=false; sid_ucp_v1=1.0.0-KGRlMWU3NmZiNDUxMzFjZWFmNDRmODViNzRjMTczMGMwYTFkMjBlYzQKIQjQwvDJgc3MBBDs6bXEBhjvMSAMMNKohqQGOAdA9AdIBBoCbHEiIDYyMzc1NTQ4OTUzODM1MWY3Nzk3MDZkYzBlMGJkNTBh; ssid_ucp_v1=1.0.0-KGRlMWU3NmZiNDUxMzFjZWFmNDRmODViNzRjMTczMGMwYTFkMjBlYzQKIQjQwvDJgc3MBBDs6bXEBhjvMSAMMNKohqQGOAdA9AdIBBoCbHEiIDYyMzc1NTQ4OTUzODM1MWY3Nzk3MDZkYzBlMGJkNTBh; bd_ticket_guard_web_domain=2; login_time=1754100974422; _bd_ticket_crypt_cookie=aeeca46c00f89c71e26efaba3259ab99; __security_mc_1_s_sdk_sign_data_key_web_protect=47dedfac-481f-b01e; __security_mc_1_s_sdk_cert_key=90c78920-4c6d-a0aa; __security_server_data_status=1; SelfTabRedDotControl=%5B%5D; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.5%7D; WallpaperGuide=%7B%22showTime%22%3A0%2C%22closeTime%22%3A1754101112183%2C%22showCount%22%3A0%2C%22cursor1%22%3A16%2C%22cursor2%22%3A4%2C%22hoverTime%22%3A1754101111875%7D; publish_badge_show_info=%221%2C0%2C0%2C1754111017631%22; FOLLOW_NUMBER_YELLOW_POINT_INFO=%22MS4wLjABAAAAXZI6LYdc99Uzm9OtYfEeIF2AvXiGAkEP_8P-R6Ln587GkxSJPLgBOv0v3FSphRWO%2F1754150400000%2F0%2F1754125426903%2F0%22; stream_player_status_params=%22%7B%5C%22is_auto_play%5C%22%3A0%2C%5C%22is_full_screen%5C%22%3A0%2C%5C%22is_full_webscreen%5C%22%3A0%2C%5C%22is_mute%5C%22%3A0%2C%5C%22is_speed%5C%22%3A1%2C%5C%22is_visible%5C%22%3A0%7D%22; __ac_nonce=0688dddd8005064883096; __ac_signature=_02B4Z6wo00f01bepzMgAAIDBgI0Ils2worW3ichAAAVof2; =douyin.com; device_web_cpu_core=12; device_web_memory_size=8; architecture=amd64; IsDouyinActive=true; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1280%2C%5C%22screen_height%5C%22%3A720%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A12%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A1.75%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A200%7D%22; FOLLOW_LIVE_POINT_INFO=%22MS4wLjABAAAAXZI6LYdc99Uzm9OtYfEeIF2AvXiGAkEP_8P-R6Ln587GkxSJPLgBOv0v3FSphRWO%2F1754150400000%2F0%2F1754127836333%2F0%22; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCQi9oU0hPN2ZLMUlWdm1oM3BmU05ya0JNWEdldVptUkM5Rk1sM3pHMnE3WWhaSlpxTXJSSkw5Zkl2b3BRV1BpK292eERaSUI3NmlqMENRMTVlU0tFSU09IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoyfQ%3D%3D; home_can_add_dy_2_desktop=%221%22; xg_device_score=6.888831104777282; passport_fe_beating_status=true; biz_trace_id=88d9dfa5; ttwid=1%7CiOYRGcA7CdQtAGX1s6z6ehRc_G7LigefBmGpvbyiNYM%7C1754127842%7Caf0a38ba521cbea69a0681056fd2f919affe571cf879e8ed1611719b634bb033; sdk_source_info=7e276470716a68645a606960273f276364697660272927676c715a6d6069756077273f276364697660272927666d776a68605a607d71606b766c6a6b5a7666776c7571273f275e58272927666a6b766a69605a696c6061273f27636469766027292762696a6764695a7364776c6467696076273f275e582729277672715a646971273f2763646976602729277f6b5a666475273f2763646976602729276d6a6e5a6b6a716c273f2763646976602729276c6b6f5a7f6367273f27636469766027292771273f2732343c30313d32373431303234272927676c715a75776a716a666a69273f2763646976602778; bit_env=MFG8BoBoytNm13a8aBFGi-XDJMBdNGAaRF34vWqcUEJwpb4zWF2yM-hgLm1PfRIaqbKvJW1BG2wA7kjXdTg6oknFEA22vSM4bFUEn7ilAo1vBCyHrK9_ZIRkesnEx2ApI0YlZK4UR4hDGnBK1PTWaseSEGZX7XIHT9W4I7wo0SZciWs3lNCPzg62nWyh_l4mZsia5qSMRVHppEBT8zLoWzc0zPM2xFbZyKav9Ji9hDXjdpTr1l0DF9VAN2uDmgWz4UeAEwTUwFwp1gWQnwHyyAkjnFjQ9r3QJ_W2_MR3SNgEvn5_EAaTtIKIrmC1QlXKpPdLSimW4-78X_udmG9mkzSFd532Nzi5oeKr6Re9ZekvXa6qKFXtJ6NGelkmahYIRT1enBR9-ftpXy2ShozdObE_KYP9YBTtkH1S-di2iiFedrqVLfrU_39r0bpDgIyZ-h4TjG1MCxhYuIPU30Lz7xTtCXHRzit4xbBxaZJ6J4nN-Rp6vRTOtIk9kL0vk41PbzAMxo6qbGJI-RCf-x5HryGyrwvkx6FtUtEwqe9HIow%3D; gulu_source_res=eyJwX2luIjoiNzU0M2ZjOGQ1M2I0ODllM2QzNDA1NDBmYmViY2VhOTQ5YjdkNmE0NmQyY2RiODQzN2RiNDY4OTdiNDkzN2RlZiJ9; passport_auth_mix_state=x5eqxhza2xk8190mcvpc8gglk3zt0hgjtkkgneasdsv3fxa8; odin_tt=c7369711fff09c36963f55a0812804ff1348086569928d093bd51868c4ee76a96492f75329c0e447e0888490d9f443f613b98d1d688b0bec2a4122e17bb50746",
+  "homepage_list": [
+    {
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAQ1ZW11H4vd4kyX0dREHNPsYOgtMDMkQjCKUJxOFOlF8",
+      "nickname": "老黄游钓中国",
+      "last_check": null,
+      "latest_video_time": null
+    },
+    {
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAQy43nfhrf8Vz0NoS2F_gdFM_ESue3rTclASiszLzrbXPlVtOGQa0TwOcokDPoyWU",
+      "nickname": "阿程的小房车之旅",
+      "last_check": null,
+      "latest_video_time": null
+    },
+    {
+      "url": "https://www.douyin.com/user/MS4wLjABAAAA_W3WHdo9DWZ8dtbASxRQq9UpG5MLOrfa6Pgz4CpfVTM",
+      "nickname": "秋同学爱搞笑",
+      "last_check": null,
+      "latest_video_time": null
+    },
+    {
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAEi7nHMJG0OTV6GxYBeDCZGZ4AER85bEE8YZPRulWNIg",
+      "nickname": "大漠钓圣",
+      "last_check": null,
+      "latest_video_time": null
+    },
+    {
+      "url": "https://www.douyin.com/user/MS4wLjABAAAAkOG7Gd5jobSznpJgEgXB5Z1sl7W2DfccDTFLJ8AVq3I",
+      "nickname": "萬事勝意",
+      "last_check": null,
+      "latest_video_time": null
+    }
+  ],
+  "video_time_filter": 60,
+  "cookie_history": [],
+  "enable_sound_notification": true,
+  "sound_file_path": ""
+}

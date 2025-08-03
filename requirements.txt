@@ -1,0 +1,7 @@
+click
+loguru
+ujson
+requests
+PyExecJS
+# rookiepy is optional and requires Rust to be installed
+# To install rookiepy: pip install rookiepy (after installing Rust from https://rustup.rs/)

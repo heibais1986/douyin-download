@@ -1,0 +1,265 @@
+# -*- encoding: utf-8 -*-
+'''
+@File    :   request.py
+@Time    :   2024年07月15日
+@Author  :   erma0
+@Version :   1.1
+@Link    :   https://github.com/ShilongLee/Crawler
+@Desc    :   抖音sign
+'''
+import os
+import random
+import re
+from urllib.parse import quote
+
+import requests
+from loguru import logger
+
+try:
+    from .cookies import get_cookie_dict
+    from .execjs_fix import execjs
+except ImportError:
+    # 当作为独立模块运行时使用绝对导入
+    from cookies import get_cookie_dict
+    from execjs_fix import execjs
+
+
+class Request(object):
+
+    HOST = 'https://www.douyin.com'
+    PARAMS = {
+        'device_platform': 'webapp',
+        'aid': '6383',
+        'channel': 'channel_pc_web',
+        'publish_video_strategy_type': '2',
+        'source': 'channel_pc_web',
+        #'sec_user_id': 'MS4wLjABAAAAFFSebq0wtofl1v55ak14_sCqEotqFAnjBwz-6ZJ1J9Q',
+        'personal_center_strategy': '1',
+        'profile_other_record_enable': '1',
+        'land_to': '1',
+        'update_version_code': '170400',
+        'pc_client_type': '1',
+        'pc_libra_divert': 'Windows',
+        'support_h265': '1',
+        'support_dash': '1',
+        'cpu_core_num': '12',
+        'version_code': '170400',
+        'version_name': '17.4.0',
+        'cookie_enabled': 'true',
+        'screen_width': '2560',
+        'screen_height': '1440',
+        'browser_language': 'zh-CN',
+        'browser_platform': 'Win32',
+        'browser_name': 'Edge',
+        'browser_version': '138.0.0.0',
+        'browser_online': 'true',
+        'engine_name': 'Blink',
+        'engine_version': '138.0.0.0',
+        'os_name': 'Windows',
+        'os_version': '10',
+        'device_memory': '8',
+        'platform': 'PC',
+        'downlink': '10',
+        'effective_type': '4g',
+        'round_trip_time': '100',
+        'webid': '7483171167227659830',
+        'uifid': '164c22db5016193fd69c8bfb0b166ea3a563c2c88054b8eae8759946ea9753ce075876e6cf3d53a3bcd9946d4bdf98fa6c287a4c1ea3b4af412d09773df5a059c2aac5e18ea48ccf770159719ef7de9dae7f19f2a4df260de78f5da4573d0f6fca7705e137c8254d7aee892e0f69ec5dce475f001eeb7f1c752fa8b4242b3d1d577c033923602bef33c999a6fa40a21aaebb100a2d4922cc0fd7726536ee39d8569199066ea1734a2d059e089c060ddaa090f6c7d01d3605d080168f1f844844',
+        'verifyFp': 'verify_md709ed1_hLJwCn79_wgTF_4LHk_9OfY_cGEfYy6KzPVV',
+        'fp': 'verify_md709ed1_hLJwCn79_wgTF_4LHk_9OfY_cGEfYy6KzPVV',
+        'msToken': 'tajoEgRrE9BGs70xzQ6pnFSpxHHhgXNo8NCzZX9lrj0Br7CEfvdKQ_iel1riKEjxbfhRwBfudRFeMRIZJIAoa0hqbUjgI7Rc1scnTVDkBKtGLfsiCuvAMFUUwKqMkZPsjVpn1-tTEshU2t7NYq04nWRlfx2g_BIort57pq1vkPPenPraqwefP7I=',
+        'a_bogus': 'OvsVgtSwmxQbFdFGmCGA9tMUIudMrPWySBTdStOPyNu2Oq0YUuPnkntSboz54i5jg8BzwH37TD0AbxxcTsU0ZHrpqmpkS/4Wo0AII88L2qqmTlhpLNRpCLuNtJHG8QiEY/oyJ1hIlU8PIxC4DprhUQ5Je/TrsYkpQqrRdnUaY9tk60G9FrFKuPbdxXzN5R2-Zf==',
+        'x-secsdk-web-expire': '1754127410592',
+        'x-secsdk-web-signature': '12bf9723441ac11da4c9052092b0c10b',
+    }
+    HEADERS = {
+        'accept': 'application/json, text/plain, */*',
+        'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+        'priority': 'u=1, i',
+        'referer': 'https://www.douyin.com/user/MS4wLjABAAAAFFSebq0wtofl1v55ak14_sCqEotqFAnjBwz-6ZJ1J9Q?from_tab_name=main&vid=7530495662610238766',
+        'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Microsoft Edge";v="138"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
+        'uifid': '164c22db5016193fd69c8bfb0b166ea3a563c2c88054b8eae8759946ea9753ce075876e6cf3d53a3bcd9946d4bdf98fa6c287a4c1ea3b4af412d09773df5a059c2aac5e18ea48ccf770159719ef7de9dae7f19f2a4df260de78f5da4573d0f6fca7705e137c8254d7aee892e0f69ec5dce475f001eeb7f1c752fa8b4242b3d1d577c033923602bef33c999a6fa40a21aaebb100a2d4922cc0fd7726536ee39d8569199066ea1734a2d059e089c060ddaa090f6c7d01d3605d080168f1f844844',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0'
+    }
+    filepath = os.path.dirname(__file__)
+    SIGN = execjs.compile(
+        open(os.path.join(filepath, 'js/douyin_minimal.js'), 'r', encoding='utf-8').read())
+    WEBID = ''
+
+    def __init__(self, cookie='', UA=''):
+        self.COOKIES = get_cookie_dict(cookie)
+        if UA:  # 如果需要访问搜索页面源码等内容，需要提供cookie对应的UA
+            version = UA.split(' Chrome/')[1].split(' ')[0]
+            _version = version.split('.')[0]
+            self.HEADERS.update({
+                "User-Agent": UA,  # 主要是这个
+                "sec-ch-ua": f'"Chromium";v="{_version}", "Not(A:Brand";v="24", "Google Chrome";v="{_version}"',
+            })
+            self.PARAMS.update({
+                "browser_version": version,
+                "engine_version": version,  # 主要是这个
+            })
+
+    def get_sign(self, uri: str, params: dict) -> dict:
+        query = '&'.join([f'{k}={quote(str(v))}' for k, v in params.items()])
+        call_name = 'sign_datail'
+        if 'reply' in uri:
+            call_name = 'sign_reply'
+        a_bogus = self.SIGN.call(
+            call_name, query, self.HEADERS.get("User-Agent"))
+        return a_bogus
+
+    def get_params(self, params: dict) -> dict:
+        params.update(self.PARAMS)
+        params['msToken'] = self.get_ms_token()
+        params['screen_width'] = self.COOKIES.get('dy_swidth', 2560)
+        params['screen_height'] = self.COOKIES.get('dy_sheight', 1440)
+        params['cpu_core_num'] = self.COOKIES.get('device_web_cpu_core', 12)
+        params['device_memory'] = self.COOKIES.get('device_web_memory_size', 8)
+        params['verifyFp'] = self.COOKIES.get('s_v_web_id', None)
+        params['fp'] = self.COOKIES.get('s_v_web_id', None)
+        params['webid'] = self.get_webid()
+        # 添加uifid参数
+        if 'uifid' not in params:
+            params['uifid'] = self.HEADERS.get('uifid', '')
+        return params
+
+    def get_webid(self):
+        import base64
+        import re
+        
+        if not self.WEBID:
+            # 首先尝试从cookie中的ttwid提取webid
+            ttwid = self.COOKIES.get('ttwid', '')
+            if ttwid and '|' in ttwid:
+                # ttwid格式: 1|base64|timestamp|hash
+                parts = ttwid.split('|')
+                if len(parts) >= 2:
+                    try:
+                        decoded = base64.b64decode(parts[1] + '==').decode('utf-8')
+                        # 从解码后的字符串中提取数字ID
+                        match = re.search(r'(\d{19})', decoded)
+                        if match:
+                            self.WEBID = match.group(1)
+                    except:
+                        pass
+            
+            # 如果从cookie提取失败，尝试从页面获取
+            if not self.WEBID:
+                url = 'https://www.douyin.com/?recommend=1'
+                text = self.getHTML(url)
+                pattern = r'\\"user_unique_id\\":\\"(\d+)\\"'
+                match = re.search(pattern, text)
+                if match:
+                    self.WEBID = match.group(1)
+                    
+            # 如果还是没有，使用固定值
+            if not self.WEBID:
+                self.WEBID = '7483171167227659830'
+        return self.WEBID
+
+    def get_ms_token(self, randomlength=120):
+        """
+        返回cookie中的msToken或随机字符串
+        """
+        ms_token = self.COOKIES.get('msToken', None)
+        if not ms_token:
+            ms_token = ''
+            base_str = 'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789='
+            length = len(base_str) - 1
+            for _ in range(randomlength):
+                ms_token += base_str[random.randint(0, length)]
+        return ms_token
+
+    def getHTML(self, url) -> str:
+        headers = self.HEADERS.copy()
+        headers['sec-fetch-dest'] = 'document'
+        response = requests.get(url, headers=headers, cookies=self.COOKIES)
+        if response.status_code != 200 or response.text == '':
+            logger.error(f'HTML请求失败, url: {url}, header: {headers}')
+            return ''
+        return response.text
+
+    def getJSON(self, uri: str, params: dict, data: dict = None, max_retries: int = 3):
+        url = f'{self.HOST}{uri}'
+        params = self.get_params(params)
+        params["a_bogus"] = self.get_sign(uri, params)
+        
+        # 动态设置Referer
+        headers = self.HEADERS.copy()
+        if '/user/profile/other/' in uri:
+            headers['Referer'] = f'https://www.douyin.com/user/{params.get("sec_user_id", "")}'
+        elif '/search/' in uri:
+            headers['Referer'] = 'https://www.douyin.com/search/'
+        
+        # 记录API调用详情
+        logger.info(f'API调用: {uri}')
+        logger.info(f'完整URL: {url}')
+        logger.info(f'关键参数: sec_user_id={params.get("sec_user_id", "N/A")}, max_cursor={params.get("max_cursor", "N/A")}, count={params.get("count", "N/A")}')
+        logger.info(f'请求方法: {"POST" if data else "GET"}')
+        
+        for attempt in range(max_retries):
+            try:
+                if data:
+                    response = requests.post(
+                        url, params=params, data=data, headers=headers, cookies=self.COOKIES, timeout=30)
+                else:
+                    response = requests.get(
+                        url, params=params, headers=headers, cookies=self.COOKIES, timeout=30)
+                
+                # 记录响应状态
+                logger.info(f'响应状态码: {response.status_code}, 响应大小: {len(response.text)} 字符')
+                
+                # 检查响应状态
+                if response.status_code == 200 and response.text:
+                    try:
+                        json_data = response.json()
+                        if json_data.get('status_code', 0) == 0:
+                            # 记录成功响应的数据概要
+                            if 'aweme_list' in json_data:
+                                logger.info(f'成功获取视频列表，数量: {len(json_data.get("aweme_list", []))}')
+                            elif 'user_list' in json_data:
+                                logger.info(f'成功获取用户列表，数量: {len(json_data.get("user_list", []))}')
+                            elif 'user' in json_data:
+                                user_info = json_data.get('user', {})
+                                logger.info(f'成功获取用户信息: {user_info.get("nickname", "未知")} (uid: {user_info.get("uid", "N/A")})')
+                            else:
+                                logger.info('API调用成功，返回数据结构未知')
+                            return json_data
+                        else:
+                            logger.warning(f'API返回错误状态码: {json_data.get("status_code")}, 消息: {json_data.get("status_msg", "未知错误")}')
+                    except ValueError:
+                        logger.error(f'响应不是有效的JSON格式: {response.text[:200]}')
+                
+                # 如果是最后一次尝试，记录详细错误
+                if attempt == max_retries - 1:
+                    logger.error(
+                        f'JSON请求失败：url: {url}, code: {response.status_code}, body: {response.text[:500]}')
+                    if response.status_code == 200 and not response.text:
+                        logger.error('响应为空，可能被反爬虫系统拦截')
+                else:
+                    logger.warning(f'请求失败，第{attempt + 1}次重试中...')
+                    import time
+                    time.sleep(2 ** attempt)  # 指数退避
+                    
+            except requests.exceptions.RequestException as e:
+                if attempt == max_retries - 1:
+                    logger.error(f'网络请求异常: {e}')
+                else:
+                    logger.warning(f'网络异常，第{attempt + 1}次重试中...')
+                    import time
+                    time.sleep(2 ** attempt)
+        
+        # 所有重试都失败后，删除可能无效的cookie文件
+        if os.path.exists('cookie.json'):
+            os.remove('cookie.json')
+        return {}
+
+
+if __name__ == "__main__":
+    r = Request()
+    print(r.get_webid())

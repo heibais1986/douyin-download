@@ -1,0 +1,24 @@
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000cujhh2fog65ue5m89ll0&line=0&file_id=f0337cbeff59419f9401d7ad59e53e98&sign=bbd6f35262b293c608db1ae452afca9c&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=@ 健康早餐当然离不开蛋白质和碳水啦#小熊多功能温泉蛋机 #小熊电器 #早餐 #早餐吃什么 #好物推荐🔥.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000cvl002fog65qnputtekg&line=0&file_id=a4c20d5b744a4dfa88be60e04cee486d&sign=458e6d7fbe96f53c87bdec5a05af09cc&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=@ 平时吃鸡蛋的真的要备一个这样的温泉蛋机#小熊电器 #小熊多功能温泉蛋机 #营养早餐 #早餐 #煮蛋器.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000cvr2557og65ja68k8jpg&line=0&file_id=e431f106f5c84fda8da48ab57ec831a1&sign=2292810ab13fdbe64bc5417d481d432e&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=@ 每天都要吃早餐的，这个小小的温泉蛋机太方便#小熊电器 #小熊多功能温泉蛋机 #早餐 #营养早餐.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d268qbnog65iim42jlqg&line=0&file_id=7bd9f17301bb4c50ad7e11ef02de4252&sign=b3eb9bc60c575d063aa51e5af0ddabb0&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=@ 这个小小的温泉蛋机真的太方便 #小熊电器 #小熊多功能温泉蛋机 #营养早餐.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d267f0fog65mhs23nc9g&line=0&file_id=5418b283f0f04cde8b7869e6facd5df9&sign=cd7f27bdded1be193628719d376aa74d&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=@ 真正好用的破壁机是细腻无渣的 #小熊电器 #小熊破壁机 #好物推荐🔥 #破壁机.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0200fg10000d261ui7og65n3mbs4s30&line=0&file_id=52faa4a2894140dba2b9478968cef75b&sign=bc75dcfe2c1d7fcc60947538593249d0&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=$ 朋友听劝，这玩意千万别碰~ #小熊电器 #小熊多功能温泉蛋机 #好物推荐 #早餐吃什么.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0200fg10000d263ejvog65gvsmacrmg&line=0&file_id=ba6ce946d0ac453d8122b20a3fa5ce6e&sign=0d490ac927463c6b9d8a34e424fee3f2&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=$ 千万不要买这个破壁机，容易上头 #小熊电器 #小熊低音降噪破壁机 #好物推荐 #破壁机.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0200fg10000d2687kfog65icq1sejb0&line=0&file_id=f2a3aed5737c492a97c57ed30747082e&sign=1313c4ef608e6cc70606b8066e70e5c2&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=@ 早餐不知道怎么吃的，真的可以试试这个 #小熊电器 #小熊多功能温泉蛋机 #营养早餐.mp4
