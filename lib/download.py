@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 
 from loguru import logger
@@ -11,9 +12,16 @@ def download(path, aria2_conf):
     if not os.path.exists(aria2_conf):
         logger.error('没有发现可下载的配置文件')
         return
-    
-    # 检查aria2c可执行文件是否存在
-    aria2c_path = os.path.join(os.path.dirname(__file__), '../aria2c')
+
+    # 检查aria2c可执行文件是否存在（支持打包环境）
+    # 首先尝试PyInstaller打包后的临时目录
+    if hasattr(sys, '_MEIPASS'):
+        aria2c_path = os.path.join(sys._MEIPASS, 'aria2c')
+    else:
+        # 开发环境，从项目根目录查找
+        script_dir = os.path.dirname(os.path.dirname(__file__))
+        aria2c_path = os.path.join(script_dir, 'aria2c')
+
     if os.name == 'nt':  # Windows系统
         aria2c_path += '.exe'
     

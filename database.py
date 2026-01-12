@@ -343,10 +343,32 @@ class DouyinDatabase:
         """清空视频列表"""
         conn = self.get_connection()
         cursor = conn.cursor()
-        
+
         cursor.execute('DELETE FROM videos')
         conn.commit()
         conn.close()
+
+    def get_video_by_title(self, title):
+        """根据标题检查视频是否已下载"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT video_id FROM videos WHERE title = ? AND is_downloaded = 1', (title,))
+        row = cursor.fetchone()
+
+        conn.close()
+        return row[0] if row else None
+
+    def get_video_by_id(self, video_id):
+        """根据video_id检查视频是否存在"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT video_id FROM videos WHERE video_id = ?', (video_id,))
+        row = cursor.fetchone()
+
+        conn.close()
+        return row[0] if row else None
     
     # Cookie历史相关方法
     def add_cookie_history(self, cookie_value):

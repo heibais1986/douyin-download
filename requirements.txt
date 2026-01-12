@@ -3,5 +3,8 @@ loguru
 ujson
 requests
 PyExecJS
+psutil>=5.8.0
+nuitka>=2.0.0  # 编译成机器码，完全无法反编译
+# pyarmor>=8.0.0  # 备选方案：代码加密保护
 # rookiepy is optional and requires Rust to be installed
 # To install rookiepy: pip install rookiepy (after installing Rust from https://rustup.rs/)

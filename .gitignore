@@ -9,6 +9,11 @@ __pycache__/
 *$py.class
 *.manifest
 *.spec
+*.json
 build/
-
+dist/
+auth_system/
+config/
+douyin_monitor.build/
+douyin_monitor.dist/
 aria2c.exe

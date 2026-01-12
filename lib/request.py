@@ -86,11 +86,16 @@ class Request(object):
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0'
     }
     filepath = os.path.dirname(__file__)
-    SIGN = execjs.compile(
-        open(os.path.join(filepath, 'js/douyin_minimal.js'), 'r', encoding='utf-8').read())
+    try:
+        SIGN = execjs.compile(
+            open(os.path.join(filepath, 'js/douyin_minimal.js'), 'r', encoding='utf-8').read())
+    except Exception as e:
+        # 如果JavaScript编译失败，使用备用方案
+        logger.warning(f"JavaScript编译失败，使用备用签名方案: {e}")
+        SIGN = None
     WEBID = ''
 
-    def __init__(self, cookie='', UA=''):
+    def __init__(self, cookie='', UA='', proxy_url=''):
         self.COOKIES = get_cookie_dict(cookie)
         if UA:  # 如果需要访问搜索页面源码等内容，需要提供cookie对应的UA
             version = UA.split(' Chrome/')[1].split(' ')[0]
@@ -104,14 +109,22 @@ class Request(object):
                 "engine_version": version,  # 主要是这个
             })
 
-    def get_sign(self, uri: str, params: dict) -> dict:
-        query = '&'.join([f'{k}={quote(str(v))}' for k, v in params.items()])
-        call_name = 'sign_datail'
-        if 'reply' in uri:
-            call_name = 'sign_reply'
-        a_bogus = self.SIGN.call(
-            call_name, query, self.HEADERS.get("User-Agent"))
-        return a_bogus
+        # 设置代理
+        self.proxies = None
+        if proxy_url:
+            if proxy_url.startswith('http://'):
+                https_url = proxy_url.replace('http://', 'https://')
+                self.proxies = {'http': proxy_url, 'https': https_url}
+            elif proxy_url.startswith('https://'):
+                http_url = proxy_url.replace('https://', 'http://')
+                self.proxies = {'http': http_url, 'https': proxy_url}
+            elif proxy_url.startswith('socks5://'):
+                self.proxies = {'http': proxy_url, 'https': proxy_url}
+            else:
+                # 假设是ip:port格式，默认为http
+                self.proxies = {'http': f'http://{proxy_url}', 'https': f'https://{proxy_url}'}
+
+
 
     def get_params(self, params: dict) -> dict:
         params.update(self.PARAMS)
@@ -127,6 +140,22 @@ class Request(object):
         if 'uifid' not in params:
             params['uifid'] = self.HEADERS.get('uifid', '')
         return params
+
+    def get_sign(self, uri: str, params: dict) -> str:
+        """获取签名，使用嵌入式JS引擎"""
+        if self.SIGN:
+            try:
+                query = '&'.join([f'{k}={quote(str(v))}' for k, v in params.items()])
+                call_name = 'sign_datail'
+                if 'reply' in uri:
+                    call_name = 'sign_reply'
+                return self.SIGN.call(call_name, query, self.HEADERS.get("User-Agent"))
+            except Exception as e:
+                logger.warning(f"JavaScript签名失败: {e}，移除签名参数")
+                return None
+        else:
+            logger.warning("JavaScript签名不可用，移除签名参数")
+            return None
 
     def get_webid(self):
         import base64
@@ -178,7 +207,7 @@ class Request(object):
     def getHTML(self, url) -> str:
         headers = self.HEADERS.copy()
         headers['sec-fetch-dest'] = 'document'
-        response = requests.get(url, headers=headers, cookies=self.COOKIES)
+        response = requests.get(url, headers=headers, cookies=self.COOKIES, proxies=self.proxies)
         if response.status_code != 200 or response.text == '':
             logger.error(f'HTML请求失败, url: {url}, header: {headers}')
             return ''
@@ -187,7 +216,10 @@ class Request(object):
     def getJSON(self, uri: str, params: dict, data: dict = None, max_retries: int = 3):
         url = f'{self.HOST}{uri}'
         params = self.get_params(params)
-        params["a_bogus"] = self.get_sign(uri, params)
+        # 尝试获取签名，如果失败则不添加签名参数
+        sign = self.get_sign(uri, params)  # 这里调用的是返回str的get_sign方法
+        if sign:
+            params["a_bogus"] = sign
         
         # 动态设置Referer
         headers = self.HEADERS.copy()
@@ -206,10 +238,10 @@ class Request(object):
             try:
                 if data:
                     response = requests.post(
-                        url, params=params, data=data, headers=headers, cookies=self.COOKIES, timeout=30)
+                        url, params=params, data=data, headers=headers, cookies=self.COOKIES, proxies=self.proxies, timeout=30)
                 else:
                     response = requests.get(
-                        url, params=params, headers=headers, cookies=self.COOKIES, timeout=30)
+                        url, params=params, headers=headers, cookies=self.COOKIES, proxies=self.proxies, timeout=30)
                 
                 # 记录响应状态
                 logger.info(f'响应状态码: {response.status_code}, 响应大小: {len(response.text)} 字符')

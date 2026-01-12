@@ -30,7 +30,7 @@ except ImportError:
 
 class Douyin(object):
 
-    def __init__(self, target: str = '', limit: int = 0, type: str = 'post', down_path: str = '下载', cookie: str = ''):
+    def __init__(self, target: str = '', limit: int = 0, type: str = 'post', down_path: str = '下载', cookie: str = '', proxy_url: str = ''):
         """
         初始化信息
         """
@@ -47,7 +47,7 @@ class Douyin(object):
         self.results = []
         self.lock = Lock()
 
-        self.request = Request(cookie)
+        self.request = Request(cookie, proxy_url=proxy_url)
 
     def run(self):
 
@@ -629,8 +629,8 @@ class Douyin(object):
                 # 保存作品下载配置
                 else:
                     for line in self.results:  # 只下载本次采集结果
-                        # 使用标题作为文件名，而不是id_标题的格式
-                        filename = line["desc"]
+                        # 使用标题_时间戳作为文件名
+                        filename = f"{line['desc']}_{line['time']}"
                         if self.type == 'collection':
                             filename = f'第{line['no']}集_{filename}'
                         if type(line["download_addr"]) is list:

@@ -1,0 +1,167 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version'
+        required: true
+        default: 'latest'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install nuitka ordered-set zstandard
+
+    - name: Install aria2
+      run: |
+        # Download aria2 for Windows
+        curl -L -o aria2.zip https://github.com/aria2/aria2/releases/download/release-1.37.0/aria2-1.37.0-win-64bit-build1.zip
+        unzip aria2.zip
+        cp aria2-1.37.0-win-64bit-build1/aria2c.exe .
+
+    - name: Install Visual Studio Build Tools (for Nuitka)
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Build with Nuitka (Production)
+      run: |
+        python -m nuitka `
+          --onefile `
+          --assume-yes-for-downloads `
+          --output-dir=dist `
+          --output-filename=抖音监控器 `
+          --include-data-dir=lib/js=lib/js `
+          --include-data-dir=static=static `
+          --include-data-dir=templates=templates `
+          --include-data-file=COOKIE_GUIDE.md=. `
+          --include-data-file=aria2c.exe=. `
+          --enable-plugin=tk-inter `
+          --windows-company-name=抖音监控器项目 `
+          --windows-product-name=抖音监控器 `
+          --windows-product-version=1.0.0 `
+          --windows-file-version=1.0.0 `
+          --windows-file-description="抖音个人主页监控器 - 终极保护版" `
+          --windows-disable-console `
+          douyin_monitor.py
+
+    - name: Build with Nuitka (Debug)
+      run: |
+        python -m nuitka `
+          --onefile `
+          --assume-yes-for-downloads `
+          --output-dir=dist `
+          --output-filename=抖音监控器_调试版 `
+          --include-data-dir=lib/js=lib/js `
+          --include-data-dir=static=static `
+          --include-data-dir=templates=templates `
+          --include-data-file=COOKIE_GUIDE.md=. `
+          --include-data-file=aria2c.exe=. `
+          --enable-plugin=tk-inter `
+          douyin_monitor.py
+
+    - name: Verify builds
+      run: |
+        ls -la dist/
+        if [ -f "dist/抖音监控器.exe" ]; then
+          echo "✅ Production build successful"
+          ls -lh dist/抖音监控器.exe
+        else
+          echo "❌ Production build failed"
+          exit 1
+        fi
+        if [ -f "dist/抖音监控器_调试版.exe" ]; then
+          echo "✅ Debug build successful"
+          ls -lh dist/抖音监控器_调试版.exe
+        else
+          echo "❌ Debug build failed"
+          exit 1
+        fi
+
+    - name: Create checksums
+      run: |
+        cd dist
+        sha256sum *.exe > checksums.txt
+        cat checksums.txt
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: douyin-monitor-windows
+        path: |
+          dist/*.exe
+          dist/checksums.txt
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/*.exe
+          dist/checksums.txt
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential clang
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install nuitka ordered-set zstandard
+
+    - name: Install aria2
+      run: |
+        sudo apt-get install -y aria2
+
+    - name: Build with Nuitka (Linux)
+      run: |
+        python -m nuitka \
+          --onefile \
+          --assume-yes-for-downloads \
+          --output-dir=dist \
+          --output-filename=douyin-monitor-linux \
+          --include-data-dir=lib/js=lib/js \
+          --include-data-dir=static=static \
+          --include-data-dir=templates=templates \
+          --include-data-file=COOKIE_GUIDE.md=. \
+          --enable-plugin=tk-inter \
+          douyin_monitor.py
+
+    - name: Upload Linux build
+      uses: actions/upload-artifact@v4
+      with:
+        name: douyin-monitor-linux
+        path: dist/douyin-monitor-linux
