@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>认证失败 - 抖音监控器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .auth-icon {
+            font-size: 4em;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+
+        .auth-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .auth-message {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .error-details {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #495057;
+            word-break: break-word;
+        }
+
+        .auth-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .auth-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .auth-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .auth-info p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .auth-info ul {
+            text-align: left;
+            color: #666;
+            padding-left: 20px;
+        }
+
+        .auth-info li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .auth-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-icon">🔒</div>
+        <h1 class="auth-title">认证失败</h1>
+
+        <div class="auth-message">
+            您的授权已过期或无效，无法访问抖音监控系统。
+        </div>
+
+        {% if error_message %}
+        <div class="error-details">
+            <strong>错误详情：</strong><br>
+            {{ error_message }}
+        </div>
+        {% endif %}
+
+        <div class="auth-actions">
+            <button class="btn" onclick="location.reload()">重试验证</button>
+            <a href="javascript:history.back()" class="btn btn-secondary">返回</a>
+        </div>
+
+        <div class="auth-info">
+            <h3>💡 解决建议</h3>
+            <ul>
+                <li>请检查网络连接是否正常</li>
+                <li>确认您的授权是否仍然有效</li>
+                <li>如果问题持续，请联系管理员重新授权</li>
+                <li>刷新页面重新验证授权状态</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 每10秒自动重试一次认证
+        setTimeout(function() {
+            location.reload();
+        }, 10000);
+
+        // 添加一些交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px) scale(1.05)';
+                });
+
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

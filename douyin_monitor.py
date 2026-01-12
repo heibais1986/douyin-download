@@ -24,11 +24,15 @@ class DouyinMonitor:
     def __init__(self, root):
         self.root = root
         self.root.title("抖音个人主页监控器")
-        self.root.geometry("620x600")
+        self.root.geometry("700x600")
         
         # 监控状态
         self.is_monitoring = False
         self.monitor_thread = None
+
+        # 认证状态跟踪
+        self.last_auth_check = None
+        self.auth_check_interval = 3600  # 1小时 = 3600秒
         
         # 配置文件路径
         self.config_file = "monitor_config.json"
@@ -177,6 +181,33 @@ class DouyinMonitor:
             # 网络异常时记录日志但不直接失败，提供给用户选择
             print(f"授权检查网络异常: {e}")
             return None  # 返回None表示网络异常
+
+    def check_authorization_running(self):
+        """运行中的认证检查（带缓存机制）"""
+        current_time = datetime.now()
+
+        # 检查是否需要重新验证
+        if (self.last_auth_check is None or
+            (current_time - self.last_auth_check).total_seconds() >= self.auth_check_interval):
+
+            self.log_message("开始检查认证状态")
+            valid, message = self.auth_client.verify_auth()
+
+            if valid:
+                self.log_message(f"认证有效: {message}")
+                self.last_auth_check = current_time
+                return True
+            else:
+                self.log_message(f"❌ 认证无效: {message}")
+                # 如果认证失败，停止监控并返回授权界面
+                if self.is_monitoring:
+                    self.stop_monitoring()
+                    # 在主线程中显示认证界面
+                    self.root.after(0, self.show_auth_interface_from_monitoring)
+                return False
+        else:
+            # 返回缓存的认证状态（假设仍有效）
+            return True
 
     def show_auth_interface(self):
         """显示授权界面"""
@@ -400,6 +431,145 @@ class DouyinMonitor:
         # 重新验证
         self.verify_and_start()
 
+    def show_auth_interface_from_monitoring(self):
+        """从监控状态返回授权界面"""
+        # 清除主界面
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+        # 设置窗口标题
+        self.root.title("抖音监控器 - 认证已过期")
+
+        # 创建授权界面（带过期提示）
+        auth_frame = tk.Frame(self.root, padx=20, pady=20)
+        auth_frame.pack(expand=True, fill=tk.BOTH)
+
+        # 警告图标和标题
+        warning_frame = tk.Frame(auth_frame)
+        warning_frame.pack(pady=(0, 20))
+
+        tk.Label(warning_frame, text="⚠️", font=('Arial', 48, 'bold'), fg='red').pack()
+        tk.Label(auth_frame, text="认证已过期",
+                font=('Arial', 18, 'bold'), fg='red').pack(pady=(10, 20))
+
+        tk.Label(auth_frame, text="您的授权已过期或无效，请重新验证。",
+                font=('Arial', 12)).pack(pady=(0, 20))
+
+        # 显示机器码
+        machine_frame = tk.Frame(auth_frame)
+        machine_frame.pack(fill=tk.X, pady=(0, 10))
+
+        tk.Label(machine_frame, text="您的机器码:",
+                font=('Arial', 10, 'bold')).pack(anchor=tk.W)
+        self.machine_code_label_monitor = tk.Label(machine_frame,
+                                                 text="生成中...",
+                                                 font=('Courier', 12),
+                                                 fg='blue')
+        self.machine_code_label_monitor.pack(anchor=tk.W, pady=(5, 0))
+
+        # 显示机器码
+        try:
+            code = self.auth_client.get_machine_code()
+            self.machine_code_label_monitor.config(text=code)
+        except Exception as e:
+            self.machine_code_label_monitor.config(text=f"生成失败: {str(e)}")
+
+        # 说明文本
+        instructions = tk.Label(auth_frame,
+            text="1. 请联系开发者重新激活您的授权\n2. 或者点击'申请新授权'重新提交申请",
+            justify=tk.LEFT, anchor='w')
+        instructions.pack(anchor=tk.W, pady=(20, 20))
+
+        # 按钮区域
+        button_frame = tk.Frame(auth_frame)
+        button_frame.pack(fill=tk.X)
+
+        tk.Button(button_frame, text="申请新授权",
+                 command=self.request_auth_from_monitoring).pack(side=tk.LEFT, padx=(0, 10))
+        tk.Button(button_frame, text="复制机器码",
+                 command=self.copy_machine_code_from_monitoring).pack(side=tk.LEFT, padx=(0, 10))
+        tk.Button(button_frame, text="手动验证",
+                 command=self.verify_and_restart_monitoring).pack(side=tk.LEFT)
+
+        # 状态标签
+        self.auth_status_label_monitor = tk.Label(auth_frame,
+                                                text="请重新申请授权",
+                                                font=('Arial', 12))
+        self.auth_status_label_monitor.pack(pady=(10, 10))
+
+        # 日志区域
+        log_frame = tk.LabelFrame(auth_frame, text="操作日志", padx=10, pady=10)
+        log_frame.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
+
+        self.auth_log_text_monitor = tk.Text(log_frame, height=6, wrap=tk.WORD)
+        scrollbar = tk.Scrollbar(log_frame, command=self.auth_log_text_monitor.yview)
+        self.auth_log_text_monitor.config(yscrollcommand=scrollbar.set)
+
+        self.auth_log_text_monitor.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    def request_auth_from_monitoring(self):
+        """从监控状态申请新授权"""
+        self.auth_log_monitor("正在申请新授权...")
+        thread = threading.Thread(target=self._request_auth_monitor_async, daemon=True)
+        thread.start()
+
+    def _request_auth_monitor_async(self):
+        """异步申请授权（监控状态）"""
+        try:
+            success, message = self.auth_client.request_auth()
+            if success:
+                self.auth_log_monitor(f"✅ 申请成功: {message}")
+                self.save_auth_config()
+                self.root.after(0, lambda: messagebox.showinfo("申请成功",
+                    f"申请已提交，请等待开发者批准。\n批准后重新启动应用。"))
+            else:
+                self.auth_log_monitor(f"❌ 申请失败: {message}")
+                self.root.after(0, lambda: messagebox.showerror("申请失败", message))
+        except Exception as e:
+            self.auth_log_monitor(f"❌ 申请异常: {str(e)}")
+            self.root.after(0, lambda: messagebox.showerror("错误", f"申请过程中发生错误: {str(e)}"))
+
+    def copy_machine_code_from_monitoring(self):
+        """从监控状态复制机器码"""
+        code = self.machine_code_label_monitor.cget('text')
+        if code and code != "生成中..." and not code.startswith("生成失败"):
+            self.root.clipboard_clear()
+            self.root.clipboard_append(code)
+            messagebox.showinfo("复制成功", "机器码已复制到剪贴板")
+        else:
+            messagebox.showwarning("复制失败", "机器码未生成")
+
+    def verify_and_restart_monitoring(self):
+        """验证并重新启动监控"""
+        self.auth_log_monitor("正在验证授权...")
+        thread = threading.Thread(target=self._verify_monitor_async, daemon=True)
+        thread.start()
+
+    def _verify_monitor_async(self):
+        """异步验证授权（监控状态）"""
+        try:
+            valid, message = self.auth_client.verify_auth()
+            self.auth_log_monitor(f"验证结果: {valid} - {message}")
+
+            if valid:
+                self.auth_log_monitor("✅ 验证成功，正在重新启动监控...")
+                self.root.after(0, self._create_main_interface)
+                self.root.after(0, lambda: messagebox.showinfo("验证成功", "授权有效，正在启动应用..."))
+            else:
+                self.auth_log_monitor(f"❌ 验证失败: {message}")
+                self.root.after(0, lambda: messagebox.showerror("验证失败", f"授权无效: {message}"))
+        except Exception as e:
+            self.auth_log_monitor(f"❌ 验证异常: {str(e)}")
+            self.root.after(0, lambda: messagebox.showerror("错误", f"验证过程中发生错误: {str(e)}"))
+
+    def auth_log_monitor(self, message):
+        """监控状态的授权日志"""
+        timestamp = datetime.now().strftime('%H:%M:%S')
+        log_entry = f"[{timestamp}] {message}\n"
+        self.auth_log_text_monitor.insert(tk.END, log_entry)
+        self.auth_log_text_monitor.see(tk.END)
+
     def _verify_async(self):
         """异步验证授权"""
         try:
@@ -515,7 +685,7 @@ class DouyinMonitor:
         self.time_filter_var = tk.StringVar(value=str(self.config.get("video_time_filter", "")))
         time_filter_entry = ttk.Entry(interval_frame, textvariable=self.time_filter_var, width=5)
         time_filter_entry.pack(side=tk.LEFT, padx=(0, 5))
-        ttk.Label(interval_frame, text="(如不填则下载所有视频)", font=('Arial', 8)).pack(side=tk.LEFT)
+        ttk.Label(interval_frame, text="(如不填则下载所有视频)").pack(side=tk.LEFT)
 
         # 下载路径设置
         ttk.Label(self.config_frame, text="下载路径:").grid(row=2, column=0, sticky=tk.W, padx=(0, 5), pady=(2, 0))
@@ -920,6 +1090,11 @@ class DouyinMonitor:
     def _start_monitoring_async(self):
         """异步开始监控（在后台线程中执行）"""
         try:
+            # 启动前先检查认证
+            if not self.check_authorization_running():
+                # 认证失败，已在 check_authorization_running 中处理
+                return
+
             # 先进行初始下载
             self.log_message("开始初始下载所有主页视频...")
             self._initial_download_all_async()
@@ -937,6 +1112,10 @@ class DouyinMonitor:
         """异步初始下载所有主页视频（在后台线程中执行）"""
         for item in self.homepage_tree.get_children():
             if not self.is_monitoring:
+                break
+
+            # 下载每个主页前检查认证
+            if not self.check_authorization_running():
                 break
 
             homepage_url = self.homepage_tree.item(item)['values'][0]
@@ -1099,6 +1278,11 @@ class DouyinMonitor:
         """异步监控循环（在后台线程中执行）"""
         while self.is_monitoring:
             try:
+                # 每次监控循环开始时检查认证状态
+                if not self.check_authorization_running():
+                    # 认证失败，已在 check_authorization_running 中处理停止监控和界面切换
+                    break
+
                 total_new_videos = self._check_all_homepages_async()
 
                 # 输出本次检查结果
@@ -1124,6 +1308,10 @@ class DouyinMonitor:
 
         for item in self.homepage_tree.get_children():
             if not self.is_monitoring:
+                break
+
+            # 检查每个主页前验证认证
+            if not self.check_authorization_running():
                 break
 
             values = list(self.homepage_tree.item(item)['values'])

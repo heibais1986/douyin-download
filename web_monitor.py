@@ -12,10 +12,11 @@ import winsound
 import os
 import pyttsx3
 from plyer import notification
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from lib.douyin import Douyin
 from run_auto_cookie import run_auto_cookie
 from database import DouyinDatabase
+from auth_system.client.auth_client import AuthClient
 
 app = Flask(__name__)
 
@@ -38,6 +39,9 @@ class WebDouyinMonitor:
         
         # 从JSON迁移数据到数据库（仅在首次运行时）
         self.migrate_to_database()
+
+        # 初始化认证检查
+        self.check_auth_status()
         
         # 多线程配置
         self.max_monitor_workers = self.config.get('max_monitor_workers', 8)  # 最大监控线程数
@@ -49,6 +53,13 @@ class WebDouyinMonitor:
         self.enable_sound_notification = self.config.get('enable_sound_notification', True)
         self.sound_file_path = self.config.get('sound_file_path', '')  # 自定义音频文件路径
         self.notification_volume = self.config.get('notification_volume', 50)  # 音量 0-100
+
+        # 认证系统
+        self.auth_client = AuthClient()
+        self.auth_client.initialize()
+        self.auth_status = 'unknown'  # 'authorized', 'unauthorized', 'unknown'
+        self.last_auth_check = None
+        self.auth_check_interval = 3600  # 1小时 = 3600秒
         
     def migrate_to_database(self):
         """迁移JSON数据到数据库"""
@@ -924,8 +935,13 @@ class WebDouyinMonitor:
         try:
             while self.is_monitoring:
                 try:
+                    # 检查认证状态
+                    if not self.check_auth_status():
+                        self.log_message("认证失败，停止监控", 'ERROR')
+                        break
+
                     self.check_all_homepages()
-                    
+
                     # 等待下次检查
                     check_interval = self.config.get('check_interval', 300)
                     for _ in range(check_interval):
@@ -1147,6 +1163,10 @@ monitor = WebDouyinMonitor()
 
 @app.route('/')
 def index():
+    # 检查认证状态
+    valid, message = monitor.check_auth_status()
+    if not valid:
+        return render_template('auth.html', error_message=message)
     return render_template('monitor.html')
 
 @app.route('/api/config', methods=['GET'])
