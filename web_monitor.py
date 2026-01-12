@@ -950,54 +950,90 @@ class WebDouyinMonitor:
     def download_new_videos(self, homepage_url, new_videos):
         """下载新视频"""
         try:
-            # 更新所有视频状态为下载中
-            for video in new_videos:
-                video_id = video.get('aweme_id', '')
-                video_title = video.get('desc', '未知标题')[:50]
-                self.log_message(f"开始下载: {video_title}", 'INFO')
-                self.update_video_download_status(video_id, '下载中', '')
-            
             # 获取用户昵称
             user_nickname = self.get_user_nickname_from_homepage(homepage_url)
-            
+
             # 构建按日期和昵称组织的下载路径
             from datetime import datetime
             import os
             today = datetime.now().strftime('%Y-%m-%d')
             base_download_path = self.config.get('download_path', './下载')
             organized_download_path = os.path.join(base_download_path, today, user_nickname)
-            
+
+            # 确保下载目录存在
+            os.makedirs(organized_download_path, exist_ok=True)
+
+            # 过滤已下载的视频
+            videos_to_download = []
+            for video in new_videos:
+                video_id = video.get('aweme_id', '')
+                video_desc = video.get('desc', '未知标题')
+                video_time = video.get('time', 0)
+
+                # 生成预期的文件名（包含格式化时间戳）
+                if video_time:
+                    try:
+                        from datetime import datetime
+                        formatted_time = datetime.fromtimestamp(int(video_time)).strftime('%Y-%m-%d_%H-%M-%S')
+                    except:
+                        formatted_time = str(video_time)
+                else:
+                    formatted_time = 'unknown_time'
+
+                expected_filename = f"{video_desc}_{formatted_time}.mp4"
+                expected_filepath = os.path.join(organized_download_path, expected_filename)
+
+                # 检查文件是否已存在
+                if os.path.exists(expected_filepath):
+                    self.log_message(f"视频已存在，跳过下载: {video_desc[:30]}", 'INFO')
+                    # 更新状态为已下载
+                    self.update_video_download_status(video_id, '已下载', organized_download_path)
+                    continue
+
+                videos_to_download.append(video)
+
+            if not videos_to_download:
+                self.log_message(f"所有视频均已下载，跳过本次下载任务", 'INFO')
+                return
+
+            # 更新待下载视频状态为下载中
+            for video in videos_to_download:
+                video_id = video.get('aweme_id', '')
+                video_title = video.get('desc', '未知标题')[:50]
+                self.log_message(f"开始下载: {video_title}", 'INFO')
+                self.update_video_download_status(video_id, '下载中', '')
+
             # 创建Douyin实例进行下载
             douyin = Douyin(
                 target=homepage_url,
-                limit=len(new_videos),
+                limit=len(videos_to_download),
                 type='post',
                 down_path=organized_download_path,
                 cookie=self.config.get('cookie', '')
             )
-            
+
             # 设置标志，避免重复创建用户文件夹
             douyin._skip_user_folder = True
-            
+
             # 获取目标信息（用户信息等）
             douyin._Douyin__get_target_info()
-            
-            # 直接设置results为我们已经过滤的新视频
-            douyin.results = new_videos
+
+            # 直接设置results为过滤后的新视频
+            douyin.results = videos_to_download
             # 清空旧结果，确保只下载新视频
             douyin.results_old = []
-            
+
             # 保存和下载
             douyin.save()
             douyin.download_all()
-            
-            # 更新所有视频状态为下载完成
-            for video in new_videos:
+
+            # 更新下载完成视频的状态
+            for video in videos_to_download:
                 video_id = video.get('aweme_id', '')
                 self.update_video_download_status(video_id, '已下载', organized_download_path)
-            
-            self.log_message(f"✅ 完成下载 {len(new_videos)} 个视频到路径: {organized_download_path}", 'SUCCESS')
-            
+
+            self.log_message(f"✅ 完成下载 {len(videos_to_download)} 个视频到路径: {organized_download_path}", 'SUCCESS')
+
         except Exception as e:
             # 更新所有视频状态为下载失败
             for video in new_videos:

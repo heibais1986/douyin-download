@@ -1269,11 +1269,56 @@ class DouyinMonitor:
     def download_new_videos(self, homepage_url, new_videos):
         """下载新视频"""
         try:
-            self.log_message(f"开始下载 {len(new_videos)} 个视频")
+            # 过滤已下载的视频
+            videos_to_download = []
+            for video in new_videos:
+                video_id = video.get('aweme_id', '')
+                video_desc = video.get('desc', '未知标题')
+                video_time = video.get('time', 0)
 
-            for i, video in enumerate(new_videos):
+                # 生成预期的文件名（包含格式化时间戳）
+                if video_time:
+                    try:
+                        from datetime import datetime
+                        formatted_time = datetime.fromtimestamp(int(video_time)).strftime('%Y-%m-%d_%H-%M-%S')
+                    except:
+                        formatted_time = str(video_time)
+                else:
+                    formatted_time = 'unknown_time'
+
+                expected_filename = f"{video_desc}_{formatted_time}.mp4"
+                download_path = self.path_var.get()
+                expected_filepath = os.path.join(download_path, expected_filename)
+
+                # 检查文件是否已存在
+                if os.path.exists(expected_filepath):
+                    self.log_message(f"视频已存在，跳过下载: {video_desc[:30]}")
+                    # 更新数据库状态
+                    video_data = {
+                        'video_id': video_id,
+                        'author': video.get('author_nickname', '未知'),
+                        'title': f"{video_desc}_{formatted_time}",
+                        'publish_time': datetime.fromtimestamp(video_time) if video_time else datetime.now(),
+                        'capture_time': datetime.now(),
+                        'video_url': video.get('download_addr'),
+                        'homepage_url': homepage_url,
+                        'is_downloaded': True,
+                        'download_path': download_path
+                    }
+                    self.db.add_video(video_data)
+                    continue
+
+                videos_to_download.append(video)
+
+            if not videos_to_download:
+                self.log_message("所有视频均已下载，跳过本次下载任务")
+                return
+
+            self.log_message(f"开始下载 {len(videos_to_download)} 个视频")
+
+            for i, video in enumerate(videos_to_download):
                 video_title = video.get('desc', '未知标题')[:50]
-                self.log_message(f"下载视频 {i+1}/{len(new_videos)}: {video_title}")
+                self.log_message(f"下载视频 {i+1}/{len(videos_to_download)}: {video_title}")
 
                 # 创建单个视频的Douyin实例
                 proxy_url = self.proxy_var.get() if self.use_proxy_var.get() else ''
@@ -1301,12 +1346,21 @@ class DouyinMonitor:
                 single_douyin.download_all()
 
                 # 记录到数据库
-                video_full_title = f"{video['desc']}_{video['time']}"
+                video_time = video.get('time', 0)
+                if video_time:
+                    try:
+                        formatted_time = datetime.fromtimestamp(int(video_time)).strftime('%Y-%m-%d_%H-%M-%S')
+                    except:
+                        formatted_time = str(video_time)
+                else:
+                    formatted_time = 'unknown_time'
+
+                video_full_title = f"{video['desc']}_{formatted_time}"
                 video_data = {
                     'video_id': video['id'],
                     'author': video.get('author_nickname', '未知'),
                     'title': video_full_title,
-                    'publish_time': datetime.fromtimestamp(video['time']),
+                    'publish_time': datetime.fromtimestamp(video_time) if video_time else datetime.now(),
                     'capture_time': datetime.now(),
                     'video_url': video.get('download_addr'),
                     'homepage_url': homepage_url,
@@ -1318,12 +1372,12 @@ class DouyinMonitor:
                 self.log_message(f"完成下载: {video_title}")
 
                 # 如果不是最后一个视频，等待1分钟 + 随机秒数
-                if i < len(new_videos) - 1:
+                if i < len(videos_to_download) - 1:
                     wait_time = 60 + random.randint(0, 100)
                     self.log_message(f"等待{wait_time}秒后下载下一个...")
                     time.sleep(wait_time)
 
-            self.log_message(f"完成下载 {len(new_videos)} 个视频")
+            self.log_message(f"完成下载 {len(videos_to_download)} 个视频")
 
         except Exception as e:
             self.log_message(f"下载失败: {e}")

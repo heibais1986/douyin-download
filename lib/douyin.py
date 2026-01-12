@@ -629,8 +629,18 @@ class Douyin(object):
                 # 保存作品下载配置
                 else:
                     for line in self.results:  # 只下载本次采集结果
-                        # 使用标题_时间戳作为文件名
-                        filename = f"{line['desc']}_{line['time']}"
+                        # 使用标题_发布时间作为文件名（可读格式）
+                        timestamp = line['time']
+                        if timestamp:
+                            try:
+                                from datetime import datetime
+                                formatted_time = datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d_%H-%M-%S')
+                            except:
+                                formatted_time = str(timestamp)
+                        else:
+                            formatted_time = 'unknown_time'
+
+                        filename = f"{line['desc']}_{formatted_time}"
                         if self.type == 'collection':
                             filename = f'第{line['no']}集_{filename}'
                         if type(line["download_addr"]) is list:

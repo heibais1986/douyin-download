@@ -50,8 +50,8 @@ jobs:
           --include-data-dir=lib/js=lib/js `
           --include-data-dir=static=static `
           --include-data-dir=templates=templates `
-          --include-data-file=COOKIE_GUIDE.md=. `
-          --include-data-file=aria2c.exe=. `
+          --include-data-file=COOKIE_GUIDE.md `
+          --include-data-file=aria2c.exe `
           --enable-plugin=tk-inter `
           --windows-company-name=抖音监控器项目 `
           --windows-product-name=抖音监控器 `
@@ -71,8 +71,8 @@ jobs:
           --include-data-dir=lib/js=lib/js `
           --include-data-dir=static=static `
           --include-data-dir=templates=templates `
-          --include-data-file=COOKIE_GUIDE.md=. `
-          --include-data-file=aria2c.exe=. `
+          --include-data-file=COOKIE_GUIDE.md `
+          --include-data-file=aria2c.exe `
           --enable-plugin=tk-inter `
           douyin_monitor.py
 
@@ -156,7 +156,7 @@ jobs:
           --include-data-dir=lib/js=lib/js \
           --include-data-dir=static=static \
           --include-data-dir=templates=templates \
-          --include-data-file=COOKIE_GUIDE.md=. \
+          --include-data-file=COOKIE_GUIDE.md \
           --enable-plugin=tk-inter \
           douyin_monitor.py
 
