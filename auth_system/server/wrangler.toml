@@ -1,0 +1,11 @@
+name = "douyin-auth"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "douyin_auth"
+database_id = "51f0d399-b67e-4665-bc00-2894a11513d0"
+
+[vars]
+ADMIN_TOKEN = "324866@Llb"

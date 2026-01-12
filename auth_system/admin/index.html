@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抖音授权管理系统</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 8px 16px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-info { background-color: #17a2b8; color: white; }
+        .btn:hover { opacity: 0.8; }
+        .status-pending { color: #ffc107; }
+        .status-approved { color: #28a745; }
+        .status-revoked { color: #dc3545; }
+        .status-rejected { color: #6c757d; }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+        .alert-error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { display: none; color: #007bff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>抖音授权管理系统</h1>
+
+        <div id="alert" class="alert" style="display: none;"></div>
+
+        <!-- 待审批申请 -->
+        <div class="section">
+            <h2>待审批申请</h2>
+            <div id="pending-loading" class="loading">加载中...</div>
+            <table id="pending-table">
+                <thead>
+                    <tr>
+                        <th>机器码</th>
+                        <th>申请时间</th>
+                        <th>IP地址</th>
+                        <th>硬件信息</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="pending-body">
+                    <tr>
+                        <td colspan="5">加载中...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 所有授权记录 -->
+        <div class="section">
+            <h2>所有授权记录</h2>
+            <div id="all-loading" class="loading">加载中...</div>
+            <table id="all-table">
+                <thead>
+                    <tr>
+                        <th>机器码</th>
+                        <th>状态</th>
+                        <th>申请时间</th>
+                        <th>批准时间</th>
+                        <th>最后登录</th>
+                        <th>登录次数</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="all-body">
+                    <tr>
+                        <td colspan="7">加载中...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 手动操作 -->
+        <div class="section">
+            <h2>手动操作</h2>
+            <div class="form-group">
+                <label for="manual-machine-code">机器码:</label>
+                <input type="text" id="manual-machine-code" placeholder="输入机器码">
+            </div>
+            <button class="btn btn-danger" onclick="revokeAuth()">撤销授权</button>
+            <button class="btn btn-info" onclick="refreshData()">刷新数据</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://dy.gta1.ggff.net';
+
+        // 页面加载时获取数据
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPendingRequests();
+            loadAllRecords();
+        });
+
+        // 显示提示信息
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            setTimeout(() => alert.style.display = 'none', 5000);
+        }
+
+        // 加载待审批申请
+        async function loadPendingRequests() {
+            const loading = document.getElementById('pending-loading');
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/pending`, {
+                    headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayPendingRequests(data.pending_requests || []);
+                } else {
+                    showAlert('加载待审批申请失败: ' + (data.error || '未知错误'), 'error');
+                }
+            } catch (error) {
+                showAlert('网络错误: ' + error.message, 'error');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // 显示待审批申请
+        function displayPendingRequests(requests) {
+            const tbody = document.getElementById('pending-body');
+
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">暂无待审批申请</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = requests.map(req => `
+                <tr>
+                    <td>${req.machine_code}</td>
+                    <td>${new Date(req.requested_at).toLocaleString()}</td>
+                    <td>${req.request_ip}</td>
+                    <td><button class="btn btn-info" onclick="showHardwareInfo('${req.machine_code}', ${JSON.stringify(req.hardware_info).replace(/"/g, '"')})">查看</button></td>
+                    <td>
+                        <button class="btn btn-success" onclick="approveRequest(${req.request_id})">批准</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 批准申请
+        async function approveRequest(requestId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/approve`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${ADMIN_TOKEN}`
+                    },
+                    body: JSON.stringify({ request_id: requestId })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('批准成功！授权令牌: ' + data.auth_token);
+                    loadPendingRequests();
+                    loadAllRecords();
+                } else {
+                    showAlert('批准失败: ' + (data.error || '未知错误'), 'error');
+                }
+            } catch (error) {
+                showAlert('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 加载所有记录
+        async function loadAllRecords() {
+            const loading = document.getElementById('all-loading');
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/list`, {
+                    headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayAllRecords(data.records || []);
+                } else {
+                    showAlert('加载记录失败: ' + (data.error || '未知错误'), 'error');
+                }
+            } catch (error) {
+                showAlert('网络错误: ' + error.message, 'error');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // 显示所有记录
+        function displayAllRecords(records) {
+            const tbody = document.getElementById('all-body');
+
+            if (records.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">暂无记录</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = records.map(record => `
+                <tr>
+                    <td>${record.machine_code}</td>
+                    <td><span class="status-${record.status}">${getStatusText(record.status)}</span></td>
+                    <td>${record.requested_at ? new Date(record.requested_at).toLocaleString() : '-'}</td>
+                    <td>${record.approved_at ? new Date(record.approved_at).toLocaleString() : '-'}</td>
+                    <td>${record.last_login_at ? new Date(record.last_login_at).toLocaleString() : '-'}</td>
+                    <td>${record.login_count || 0}</td>
+                    <td>
+                        ${record.status === 'approved' ? `<button class="btn btn-danger" onclick="revokeAuth('${record.machine_code}')">撤销</button>` : ''}
+                        <button class="btn btn-info" onclick="showDetails('${record.machine_code}', ${JSON.stringify(record).replace(/"/g, '"')})">详情</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': '待审批',
+                'approved': '已批准',
+                'rejected': '已拒绝',
+                'revoked': '已撤销'
+            };
+            return statusMap[status] || status;
+        }
+
+        // 撤销授权
+        async function revokeAuth(machineCode) {
+            const code = machineCode || document.getElementById('manual-machine-code').value;
+            if (!code) {
+                showAlert('请输入机器码', 'error');
+                return;
+            }
+
+            if (!confirm(`确定要撤销机器码 ${code} 的授权吗？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/revoke`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${ADMIN_TOKEN}`
+                    },
+                    body: JSON.stringify({ machine_code: code })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('撤销成功！');
+                    loadAllRecords();
+                } else {
+                    showAlert('撤销失败: ' + (data.error || '未知错误'), 'error');
+                }
+            } catch (error) {
+                showAlert('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 显示硬件信息
+        function showHardwareInfo(machineCode, hardwareInfo) {
+            alert(`机器码: ${machineCode}\n硬件信息:\n${JSON.stringify(hardwareInfo, null, 2)}`);
+        }
+
+        // 显示详细信息
+        function showDetails(machineCode, record) {
+            alert(`机器码: ${machineCode}\n详细信息:\n${JSON.stringify(record, null, 2)}`);
+        }
+
+        // 刷新数据
+        function refreshData() {
+            loadPendingRequests();
+            loadAllRecords();
+        }
+    </script>
+</body>
+</html>
