@@ -78,27 +78,27 @@ jobs:
 
     - name: Verify builds
       run: |
-        ls -la dist/
-        if [ -f "dist/抖音监控器.exe" ]; then
-          echo "✅ Production build successful"
-          ls -lh dist/抖音监控器.exe
-        else
-          echo "❌ Production build failed"
+        Get-ChildItem -Path dist -Force
+        if (Test-Path "dist/抖音监控器.exe") {
+          Write-Host "✅ Production build successful"
+          Get-Item "dist/抖音监控器.exe" | Select-Object Name, Length, LastWriteTime
+        } else {
+          Write-Host "❌ Production build failed"
           exit 1
-        fi
-        if [ -f "dist/抖音监控器_调试版.exe" ]; then
-          echo "✅ Debug build successful"
-          ls -lh dist/抖音监控器_调试版.exe
-        else
-          echo "❌ Debug build failed"
+        }
+        if (Test-Path "dist/抖音监控器_调试版.exe") {
+          Write-Host "✅ Debug build successful"
+          Get-Item "dist/抖音监控器_调试版.exe" | Select-Object Name, Length, LastWriteTime
+        } else {
+          Write-Host "❌ Debug build failed"
           exit 1
-        fi
+        }
 
     - name: Create checksums
       run: |
         cd dist
-        sha256sum *.exe > checksums.txt
-        cat checksums.txt
+        Get-FileHash *.exe -Algorithm SHA256 | Format-Table -AutoSize | Out-File -FilePath checksums.txt -Encoding UTF8
+        Get-Content checksums.txt
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
