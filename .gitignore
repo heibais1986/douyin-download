@@ -1,19 +1,35 @@
-.vscode
-ä¸‹è½½/
-test.py
-user.*
-cookie.*
-
-__pycache__/
-*.py[cod]
-*$py.class
-*.manifest
-*.spec
-*.json
-build/
-dist/
-auth_system/
-config/
-douyin_monitor.build/
-douyin_monitor.dist/
-aria2c.exe
+# IDE  
+.vscode/  
+  
+# Build outputs  
+build/  
+dist/  
+*.exe  
+*.spec  
+¶¶Òô¼à¿ØÆ÷*.exe  
+douyin-monitor*.exe  
+  
+# Downloads and data  
+ÏÂÔØ/  
+user.*  
+cookie.*  
+*.db  
+*.log  
+monitor.log  
+web_monitor.log  
+  
+# Python cache  
+__pycache__/  
+*.py[cod]  
+*$py.class  
+*.manifest  
+  
+# Temporary files  
+test.py  
+test_*.py  
+*.tmp  
+*.zip  
+  
+# Dependencies  
+aria2c.exe  
+aria2-*-win*.zip 
