@@ -1,7 +1,7 @@
 click
 loguru
 ujson
-requests
+requests[socks]
 PyExecJS
 psutil>=5.8.0
 nuitka>=2.0.0  # 编译成机器码，完全无法反编译

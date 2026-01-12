@@ -120,9 +120,20 @@ class Request(object):
                 self.proxies = {'http': http_url, 'https': proxy_url}
             elif proxy_url.startswith('socks5://'):
                 self.proxies = {'http': proxy_url, 'https': proxy_url}
+            elif ':' in proxy_url and not proxy_url.startswith(('http://', 'https://', 'socks5://')):
+                # ip:port格式，尝试多种协议
+                # 首先尝试socks5（最常用）
+                self.proxies = {'http': f'socks5://{proxy_url}', 'https': f'socks5://{proxy_url}'}
+                logger.info(f"使用SOCKS5代理: {proxy_url}")
             else:
-                # 假设是ip:port格式，默认为http
+                # 其他格式，默认为http
                 self.proxies = {'http': f'http://{proxy_url}', 'https': f'https://{proxy_url}'}
+
+        # 如果设置了代理，添加调试信息
+        if self.proxies:
+            logger.info(f"代理设置完成: HTTP={self.proxies.get('http', 'None')}, HTTPS={self.proxies.get('https', 'None')}")
+        else:
+            logger.info("未设置代理，使用直连模式")
 
 
 

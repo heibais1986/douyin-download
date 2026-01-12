@@ -535,7 +535,7 @@ class DouyinMonitor:
         self.proxy_var = tk.StringVar(value=self.config.get("proxy_url", ""))
         self.proxy_entry = ttk.Entry(proxy_frame, textvariable=self.proxy_var, width=30, state='disabled' if not self.use_proxy_var.get() else 'normal')
         self.proxy_entry.grid(row=0, column=1)
-        ttk.Label(proxy_frame, text="(格式: http://ip:port 或 socks5://ip:port)").grid(row=0, column=2, padx=(10, 0))
+        ttk.Label(proxy_frame, text="(格式: ip:port 或 http://ip:port 或 socks5://ip:port)").grid(row=0, column=2, padx=(10, 0))
 
         # 个人主页管理区域
         homepage_frame = ttk.LabelFrame(main_frame, text="个人主页管理", padding="5")
