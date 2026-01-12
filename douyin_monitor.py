@@ -855,6 +855,14 @@ class DouyinMonitor:
             messagebox.showerror("错误", f"下载路径不可写：{download_path}\n请检查磁盘权限或选择其他路径。")
             return
 
+        # 自动保存当前配置，确保所有设置都被保存
+        try:
+            self.save_current_config()
+            self.log_message("已自动保存当前配置")
+        except Exception as e:
+            self.log_message(f"自动保存配置失败: {e}")
+            # 不阻止监控启动，只是记录错误
+
         self.is_monitoring = True
         self.start_btn.config(state=tk.DISABLED)
         self.stop_btn.config(state=tk.NORMAL)
@@ -937,6 +945,7 @@ class DouyinMonitor:
             try:
                 # 根据时间过滤设置决定获取多少视频
                 time_filter_str = self.config.get('video_time_filter', '').strip()
+                self.log_message(f"调试: 初始下载时读取的时间过滤配置 = '{time_filter_str}' (类型: {type(time_filter_str)})")
                 limit = 0  # 默认下载所有视频
 
                 # 如果设置了时间过滤，估算需要获取的数量以提高效率
