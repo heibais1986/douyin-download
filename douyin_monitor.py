@@ -802,7 +802,11 @@ class DouyinMonitor:
         
         self.homepage_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
-        
+
+        # 删除按钮
+        delete_btn = ttk.Button(homepage_frame, text="删除选中", command=self.delete_homepage)
+        delete_btn.grid(row=2, column=0, pady=(10, 0))
+
         # 控制按钮区域
         control_frame = ttk.Frame(main_frame)
         control_frame.grid(row=4, column=0, columnspan=3, pady=(10, 0))
@@ -814,11 +818,7 @@ class DouyinMonitor:
         self.stop_btn.grid(row=0, column=1, padx=(0, 10))
 
         save_config_btn = ttk.Button(control_frame, text="保存配置", command=self.save_current_config)
-        save_config_btn.grid(row=0, column=2, padx=(0, 10))
-
-        # 在控制按钮区域添加删除按钮，与上面的"添加"按钮对齐
-        delete_btn = ttk.Button(control_frame, text="删除选中", command=self.delete_homepage)
-        delete_btn.grid(row=0, column=3)
+        save_config_btn.grid(row=0, column=2)
         
         # 状态显示区域
         status_frame = ttk.LabelFrame(main_frame, text="运行状态", padding="5")
