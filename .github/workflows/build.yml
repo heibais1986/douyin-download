@@ -41,7 +41,7 @@ jobs:
           --onefile `
           --assume-yes-for-downloads `
           --output-dir=dist `
-          --output-filename=抖音监控器 `
+          --output-filename=douyin_download `
           --include-data-dir=lib/js=lib/js `
           --include-data-dir=static=static `
           --include-data-dir=templates=templates `
@@ -52,7 +52,7 @@ jobs:
           --windows-product-name=抖音监控器 `
           --windows-product-version=1.0.0 `
           --windows-file-version=1.0.0 `
-          --windows-file-description="抖音个人主页监控器 - 终极保护版" `
+          --windows-file-description="抖音个人主页监控器" `
           --windows-disable-console `
           douyin_monitor.py
 
@@ -62,7 +62,7 @@ jobs:
           --onefile `
           --assume-yes-for-downloads `
           --output-dir=dist `
-          --output-filename=抖音监控器_调试版 `
+          --output-filename=douyin_download_debug `
           --include-data-dir=lib/js=lib/js `
           --include-data-dir=static=static `
           --include-data-dir=templates=templates `
@@ -74,16 +74,16 @@ jobs:
     - name: Verify builds
       run: |
         Get-ChildItem -Path dist -Force
-        if (Test-Path "dist/抖音监控器.exe") {
+        if (Test-Path "dist/douyin_download.exe") {
           Write-Host "✅ Production build successful"
-          Get-Item "dist/抖音监控器.exe" | Select-Object Name, Length, LastWriteTime
+          Get-Item "dist/douyin_download.exe" | Select-Object Name, Length, LastWriteTime
         } else {
           Write-Host "❌ Production build failed"
           exit 1
         }
-        if (Test-Path "dist/抖音监控器_调试版.exe") {
+        if (Test-Path "dist/douyin_download_debug.exe") {
           Write-Host "✅ Debug build successful"
-          Get-Item "dist/抖音监控器_调试版.exe" | Select-Object Name, Length, LastWriteTime
+          Get-Item "dist/douyin_download_debug.exe" | Select-Object Name, Length, LastWriteTime
         } else {
           Write-Host "❌ Debug build failed"
           exit 1
