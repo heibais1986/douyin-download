@@ -33,6 +33,10 @@ class DouyinMonitor:
         # 认证状态跟踪
         self.last_auth_check = None
         self.auth_check_interval = 3600  # 1小时 = 3600秒
+
+        # 定时认证检查线程
+        self.auth_check_thread = None
+        self.auth_check_thread_running = False
         
         # 配置文件路径
         self.config_file = "monitor_config.json"
@@ -63,10 +67,15 @@ class DouyinMonitor:
         # 异步检查授权状态
         self._check_auth_on_startup()
 
+        # 启动定时认证检查线程
+        self._start_periodic_auth_check()
+
     def on_closing(self):
         """窗口关闭时自动保存配置"""
-        self.save_current_config()
+        self.save_current_config(show_message=False)
         self.save_auth_config()
+        # 停止定时认证检查线程
+        self._stop_periodic_auth_check()
         self.root.destroy()
 
     def load_auth_config(self):
@@ -208,6 +217,56 @@ class DouyinMonitor:
         else:
             # 返回缓存的认证状态（假设仍有效）
             return True
+
+    def _start_periodic_auth_check(self):
+        """启动定时认证检查线程"""
+        if not self.auth_check_thread_running:
+            self.auth_check_thread_running = True
+            self.auth_check_thread = threading.Thread(target=self._periodic_auth_check_loop, daemon=True)
+            self.auth_check_thread.start()
+            self.logger.info("定时认证检查线程已启动")
+
+    def _stop_periodic_auth_check(self):
+        """停止定时认证检查线程"""
+        if self.auth_check_thread_running:
+            self.auth_check_thread_running = False
+            if self.auth_check_thread and self.auth_check_thread.is_alive():
+                self.auth_check_thread.join(timeout=2)
+            self.logger.info("定时认证检查线程已停止")
+
+    def _periodic_auth_check_loop(self):
+        """定时认证检查循环"""
+        while self.auth_check_thread_running:
+            try:
+                current_time = datetime.now()
+
+                # 检查是否需要重新验证（每1小时检查一次）
+                if (self.last_auth_check is None or
+                    (current_time - self.last_auth_check).total_seconds() >= self.auth_check_interval):
+
+                    self.logger.info("定时认证检查：开始验证授权状态")
+                    valid, message = self.auth_client.verify_auth()
+
+                    if valid:
+                        self.logger.info(f"定时认证检查：认证有效 - {message}")
+                        self.last_auth_check = current_time
+                        # 在主线程中更新日志（可选）
+                        self.root.after(0, lambda: self.log_message("定时认证检查通过"))
+                    else:
+                        self.logger.warning(f"定时认证检查：认证无效 - {message}")
+                        # 在主线程中显示认证界面
+                        self.root.after(0, self.show_auth_interface_from_monitoring)
+                        # 停止认证检查循环
+                        break
+
+            except Exception as e:
+                self.logger.error(f"定时认证检查异常: {e}")
+
+            # 等待1小时后再次检查
+            for _ in range(3600):  # 3600秒 = 1小时
+                if not self.auth_check_thread_running:
+                    break
+                time.sleep(1)
 
     def show_auth_interface(self):
         """显示授权界面"""
@@ -714,13 +773,13 @@ class DouyinMonitor:
         homepage_frame.rowconfigure(1, weight=1)
         
         # 添加主页
-        ttk.Label(homepage_frame, text="主页URL/ID:").grid(row=0, column=0, sticky=tk.W, padx=(0, 10))
+        ttk.Label(homepage_frame, text="主页URL:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
         self.homepage_var = tk.StringVar()
-        homepage_entry = ttk.Entry(homepage_frame, textvariable=self.homepage_var, width=40)
+        homepage_entry = ttk.Entry(homepage_frame, textvariable=self.homepage_var)
         homepage_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=(0, 10))
-        
+
         add_btn = ttk.Button(homepage_frame, text="添加", command=self.add_homepage)
-        add_btn.grid(row=0, column=2, padx=(10, 0))
+        add_btn.grid(row=0, column=2)
         
         # 主页列表
         list_frame = ttk.Frame(homepage_frame)
@@ -744,22 +803,22 @@ class DouyinMonitor:
         self.homepage_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
         
-        # 删除按钮
-        delete_btn = ttk.Button(homepage_frame, text="删除选中", command=self.delete_homepage)
-        delete_btn.grid(row=2, column=0, pady=(10, 0))
-        
         # 控制按钮区域
         control_frame = ttk.Frame(main_frame)
         control_frame.grid(row=4, column=0, columnspan=3, pady=(10, 0))
-        
+
         self.start_btn = ttk.Button(control_frame, text="开始监控", command=self.start_monitoring)
         self.start_btn.grid(row=0, column=0, padx=(0, 10))
-        
+
         self.stop_btn = ttk.Button(control_frame, text="停止监控", command=self.stop_monitoring, state=tk.DISABLED)
         self.stop_btn.grid(row=0, column=1, padx=(0, 10))
-        
+
         save_config_btn = ttk.Button(control_frame, text="保存配置", command=self.save_current_config)
-        save_config_btn.grid(row=0, column=2)
+        save_config_btn.grid(row=0, column=2, padx=(0, 10))
+
+        # 在控制按钮区域添加删除按钮，与上面的"添加"按钮对齐
+        delete_btn = ttk.Button(control_frame, text="删除选中", command=self.delete_homepage)
+        delete_btn.grid(row=0, column=3)
         
         # 状态显示区域
         status_frame = ttk.LabelFrame(main_frame, text="运行状态", padding="5")
@@ -950,7 +1009,7 @@ class DouyinMonitor:
         
         if messagebox.askyesno("确认", "确定要删除选中的主页吗？"):
             for item in selected:
-                homepage = self.homepage_tree.item(item)['values'][0]
+                homepage = str(self.homepage_tree.item(item)['values'][0])
                 self.homepage_tree.delete(item)
                 self.log_message(f"删除主页: {homepage}")
             
@@ -962,29 +1021,30 @@ class DouyinMonitor:
         for item in self.homepage_tree.get_children():
             values = self.homepage_tree.item(item)['values']
             homepage_list.append({
-                'url': values[0],
+                'url': str(values[0]),
                 'last_check': values[2] if values[2] != '从未' else None,
                 'latest_video_time': values[3] if values[3] != '未知' else None
             })
-        
+
         self.config['homepage_list'] = homepage_list
     
     def load_homepage_list(self):
         """加载保存的主页列表"""
         for homepage_info in self.config.get('homepage_list', []):
-            url = homepage_info.get('url', '')
+            url = str(homepage_info.get('url', ''))
             last_check = homepage_info.get('last_check', '从未')
             latest_video_time = homepage_info.get('latest_video_time', '未知')
-            
+
             self.homepage_tree.insert('', tk.END, values=(url, '未检查', last_check, latest_video_time))
     
-    def save_current_config(self):
+    def save_current_config(self, show_message=True):
         """保存当前配置"""
         try:
             # 验证下载路径
             download_path = self.path_var.get().strip()
             if download_path and not self._validate_download_path(download_path):
-                messagebox.showerror("错误", f"下载路径不可写：{download_path}\n请检查磁盘权限或选择其他路径。")
+                if show_message:
+                    messagebox.showerror("错误", f"下载路径不可写：{download_path}\n请检查磁盘权限或选择其他路径。")
                 return
 
             self.config['cookie'] = self.cookie_var.get()
@@ -998,12 +1058,15 @@ class DouyinMonitor:
             self.update_homepage_config()
             self.save_config()
 
-            messagebox.showinfo("成功", "配置已保存")
+            if show_message:
+                messagebox.showinfo("成功", "配置已保存")
             self.log_message("配置已保存")
         except ValueError:
-            messagebox.showerror("错误", "检查间隔必须是数字")
+            if show_message:
+                messagebox.showerror("错误", "检查间隔必须是数字")
         except Exception as e:
-            messagebox.showerror("错误", f"保存配置失败: {e}")
+            if show_message:
+                messagebox.showerror("错误", f"保存配置失败: {e}")
     
     def start_monitoring(self):
         """开始监控"""
@@ -1025,9 +1088,9 @@ class DouyinMonitor:
             messagebox.showerror("错误", f"下载路径不可写：{download_path}\n请检查磁盘权限或选择其他路径。")
             return
 
-        # 自动保存当前配置，确保所有设置都被保存
+        # 自动保存当前配置，确保所有设置都被保存（静默保存，不显示弹窗）
         try:
-            self.save_current_config()
+            self.save_current_config(show_message=False)
             self.log_message("已自动保存当前配置")
         except Exception as e:
             self.log_message(f"自动保存配置失败: {e}")
@@ -1060,7 +1123,7 @@ class DouyinMonitor:
                 cookie = self.cookie_var.get().strip()
                 urls = []
                 for item in self.homepage_tree.get_children():
-                    url = self.homepage_tree.item(item)['values'][0]
+                    url = str(self.homepage_tree.item(item)['values'][0])
                     urls.append(url)
 
                 if not cookie or not urls:
@@ -1118,7 +1181,7 @@ class DouyinMonitor:
             if not self.check_authorization_running():
                 break
 
-            homepage_url = self.homepage_tree.item(item)['values'][0]
+            homepage_url = str(self.homepage_tree.item(item)['values'][0])
             self.log_message(f"开始初始下载主页: {homepage_url}")
 
             try:
@@ -1227,7 +1290,10 @@ class DouyinMonitor:
                             # 手动初始化json_save_path
                             single_douyin.json_save_path = single_douyin.down_path
                             single_douyin.results = [video]
-                            single_douyin.aria2_conf = os.path.join(self.path_var.get(), f'temp_{video["id"]}.txt')
+                            # 将aria2配置文件放在系统临时目录，避免在下载目录中生成temp文件
+                            import tempfile
+                            temp_dir = tempfile.gettempdir()
+                            single_douyin.aria2_conf = os.path.join(temp_dir, f'douyin_temp_{video["id"]}.txt')
                             single_douyin.save()
                             single_douyin.download_all()
 
@@ -1315,7 +1381,7 @@ class DouyinMonitor:
                 break
 
             values = list(self.homepage_tree.item(item)['values'])
-            homepage_url = values[0]
+            homepage_url = str(values[0])
 
             try:
                 # 更新状态为检查中
@@ -1535,12 +1601,22 @@ class DouyinMonitor:
                 # 设置单个视频结果
                 single_douyin.results = [video]
 
-                # 临时修改aria2配置文件路径，避免覆盖
-                single_douyin.aria2_conf = os.path.join(self.path_var.get(), f'temp_{video["id"]}.txt')
+                # 将aria2配置文件放在系统临时目录，避免在下载目录中生成temp文件
+                import tempfile
+                temp_dir = tempfile.gettempdir()
+                single_douyin.aria2_conf = os.path.join(temp_dir, f'douyin_temp_{video["id"]}.txt')
 
                 # 保存和下载
                 single_douyin.save()
                 single_douyin.download_all()
+
+                # 清理临时aria2配置文件
+                try:
+                    if os.path.exists(single_douyin.aria2_conf):
+                        os.remove(single_douyin.aria2_conf)
+                        self.logger.debug(f"已清理临时文件: {single_douyin.aria2_conf}")
+                except Exception as e:
+                    self.logger.warning(f"清理临时文件失败 {single_douyin.aria2_conf}: {e}")
 
                 # 记录到数据库
                 video_time = video.get('time', 0)
@@ -1583,10 +1659,11 @@ class DouyinMonitor:
         """在状态区域显示消息"""
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         log_entry = f"[{timestamp}] {message}\n"
-        
-        # 在主线程中更新UI
-        self.root.after(0, lambda: self._update_status_text(log_entry))
-        
+
+        # 在主线程中更新UI（仅当status_text存在时）
+        if hasattr(self, 'status_text') and self.status_text:
+            self.root.after(0, lambda: self._update_status_text(log_entry))
+
         # 同时记录到日志文件
         self.logger.info(message)
     
