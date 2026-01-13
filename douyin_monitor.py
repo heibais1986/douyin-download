@@ -896,56 +896,53 @@ class DouyinMonitor:
         main_frame.rowconfigure(5, weight=3)  # 给状态框更多权重
 
     def show_cookie_guide(self):
-        """显示Cookie提取指南"""
+        """显示Cookie提取指南图片"""
         try:
             # 处理不同打包环境中的文件路径
             import sys
-            guide_file = None
+            image_file = None
 
             # 尝试多种可能的路径
             possible_paths = []
 
             # 开发环境
-            possible_paths.append("COOKIE_GUIDE.md")
+            possible_paths.append("static/image.png")
+            possible_paths.append("image.png")
 
             # PyInstaller 或 Nuitka 打包环境
             if hasattr(sys, '_MEIPASS'):
-                possible_paths.append(os.path.join(sys._MEIPASS, "COOKIE_GUIDE.md"))
+                possible_paths.append(os.path.join(sys._MEIPASS, "static", "image.png"))
+                possible_paths.append(os.path.join(sys._MEIPASS, "image.png"))
 
             # Nuitka 的另一种情况
             if hasattr(sys, 'frozen') and sys.frozen:
                 # 尝试当前工作目录
-                possible_paths.append(os.path.join(os.getcwd(), "COOKIE_GUIDE.md"))
+                possible_paths.append(os.path.join(os.getcwd(), "static", "image.png"))
+                possible_paths.append(os.path.join(os.getcwd(), "image.png"))
 
             # 查找可用的文件
             for path in possible_paths:
                 if os.path.exists(path):
-                    guide_file = path
+                    image_file = path
                     break
 
-            if guide_file:
-                with open(guide_file, 'r', encoding='utf-8') as f:
-                    content = f.read()
-
-                # 创建新的窗口显示指南
+            if image_file:
+                # 创建新的窗口显示图片
                 guide_window = tk.Toplevel(self.root)
                 guide_window.title("Cookie提取指南")
                 guide_window.geometry("900x700")
 
-                # 创建滚动文本框
-                text_frame = ttk.Frame(guide_window, padding="10")
-                text_frame.pack(fill=tk.BOTH, expand=True)
+                # 创建图片显示区域
+                image_frame = ttk.Frame(guide_window, padding="10")
+                image_frame.pack(fill=tk.BOTH, expand=True)
 
-                text_widget = tk.Text(text_frame, wrap=tk.WORD, padx=10, pady=10)
-                scrollbar = ttk.Scrollbar(text_frame, orient=tk.VERTICAL, command=text_widget.yview)
-                text_widget.config(yscrollcommand=scrollbar.set)
+                # 加载图片
+                image = tk.PhotoImage(file=image_file)
+                image_label = ttk.Label(image_frame, image=image)
+                image_label.pack(fill=tk.BOTH, expand=True)
 
-                text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-                scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-                # 插入内容
-                text_widget.insert(tk.END, content)
-                text_widget.config(state=tk.DISABLED)  # 设置为只读
+                # 防止图片被垃圾回收
+                image_label.image = image
 
                 # 添加关闭按钮
                 btn_frame = ttk.Frame(guide_window, padding="10")
@@ -953,9 +950,9 @@ class DouyinMonitor:
                 ttk.Button(btn_frame, text="关闭", command=guide_window.destroy).pack()
 
             else:
-                messagebox.showerror("错误", f"找不到指南文件: {guide_file}")
+                messagebox.showerror("错误", f"找不到指南图片文件")
         except Exception as e:
-            messagebox.showerror("错误", f"读取指南文件失败: {e}")
+            messagebox.showerror("错误", f"读取指南图片失败: {e}")
 
     def toggle_config(self):
         """切换配置区域的展开/折叠状态"""
