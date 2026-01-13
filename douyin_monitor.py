@@ -905,25 +905,55 @@ class DouyinMonitor:
             # 尝试多种可能的路径
             possible_paths = []
 
-            # 开发环境
+            # 1. 开发环境 - 相对于当前工作目录
             possible_paths.append("static/image.png")
             possible_paths.append("image.png")
 
-            # PyInstaller 或 Nuitka 打包环境
-            if hasattr(sys, '_MEIPASS'):
-                possible_paths.append(os.path.join(sys._MEIPASS, "static", "image.png"))
-                possible_paths.append(os.path.join(sys._MEIPASS, "image.png"))
-
-            # Nuitka 的另一种情况
-            if hasattr(sys, 'frozen') and sys.frozen:
+            # 2. 获取可执行文件所在目录
+            if getattr(sys, 'frozen', False):
+                # 程序被打包了
+                if hasattr(sys, '_MEIPASS'):
+                    # PyInstaller 打包环境
+                    base_path = sys._MEIPASS
+                    possible_paths.append(os.path.join(base_path, "static", "image.png"))
+                    possible_paths.append(os.path.join(base_path, "image.png"))
+                
+                # Nuitka 打包环境
+                # Nuitka使用__file__指向打包后的可执行文件
+                if hasattr(sys.modules['__main__'], '__file__'):
+                    exe_dir = os.path.dirname(os.path.abspath(sys.modules['__main__'].__file__))
+                    possible_paths.append(os.path.join(exe_dir, "static", "image.png"))
+                    possible_paths.append(os.path.join(exe_dir, "image.png"))
+                
+                # 尝试可执行文件目录
+                exe_path = os.path.abspath(sys.executable)
+                exe_dir = os.path.dirname(exe_path)
+                possible_paths.append(os.path.join(exe_dir, "static", "image.png"))
+                possible_paths.append(os.path.join(exe_dir, "image.png"))
+                
+                # Nuitka onefile模式会解压到临时目录
+                # 资源文件应该在exe同级目录
+                possible_paths.append(os.path.join(exe_dir, "static.dist", "image.png"))
+                
                 # 尝试当前工作目录
                 possible_paths.append(os.path.join(os.getcwd(), "static", "image.png"))
                 possible_paths.append(os.path.join(os.getcwd(), "image.png"))
+            
+            # 3. 相对于脚本文件的路径（开发环境备用）
+            if '__file__' in globals():
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                possible_paths.append(os.path.join(script_dir, "static", "image.png"))
+                possible_paths.append(os.path.join(script_dir, "image.png"))
 
+            # 调试信息：记录尝试的路径
+            self.logger.info(f"尝试查找image.png，共{len(possible_paths)}个路径")
+            
             # 查找可用的文件
-            for path in possible_paths:
+            for i, path in enumerate(possible_paths):
+                self.logger.debug(f"尝试路径 {i+1}: {path}")
                 if os.path.exists(path):
                     image_file = path
+                    self.logger.info(f"✅ 找到图片文件: {path}")
                     break
 
             if image_file:
@@ -950,8 +980,13 @@ class DouyinMonitor:
                 ttk.Button(btn_frame, text="关闭", command=guide_window.destroy).pack()
 
             else:
-                messagebox.showerror("错误", f"找不到指南图片文件")
+                # 记录所有尝试的路径
+                paths_tried = "\n".join([f"  - {p}" for p in possible_paths])
+                error_msg = f"找不到指南图片文件。\n\n尝试过的路径:\n{paths_tried}"
+                self.logger.error(error_msg)
+                messagebox.showerror("错误", f"找不到指南图片文件 (static/image.png)\n\n这可能是打包配置问题，请检查资源文件是否正确包含。")
         except Exception as e:
+            self.logger.error(f"读取指南图片失败: {e}", exc_info=True)
             messagebox.showerror("错误", f"读取指南图片失败: {e}")
 
     def toggle_config(self):
