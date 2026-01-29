@@ -2,15 +2,16 @@
 .vscode/  
   
 # Build outputs  
+node_modules/
 build/  
 dist/  
 *.exe  
 *.spec  
-¶¶Òô¼à¿ØÆ÷*.exe  
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*.exe  
 douyin-monitor*.exe  
   
 # Downloads and data  
-ÏÂÔØ/  
+ï¿½ï¿½ï¿½ï¿½/  
 user.*  
 cookie.*  
 *.db  
