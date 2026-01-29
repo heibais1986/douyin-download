@@ -1,4 +1,30 @@
-require("./browser_envs");
+// 动态加载 browser_envs.js（支持打包环境）
+const fs = require('fs');
+const path = require('path');
+
+function findJsFile(filename) {
+    // 尝试多个路径
+    const paths = [
+        path.join(__dirname, filename),
+        path.join(process.cwd(), filename),
+    ];
+    
+    // 如果是打包环境，尝试资源目录
+    if (process.resourcesPath) {
+        paths.push(path.join(process.resourcesPath, filename));
+    }
+    
+    for (const p of paths) {
+        if (fs.existsSync(p)) {
+            return p;
+        }
+    }
+    
+    // 如果都找不到，返回原始路径（让 require 报错）
+    return filename;
+}
+
+require(findJsFile("browser_envs.js"));
 
 if (!window.bdms) {
     !(function () {

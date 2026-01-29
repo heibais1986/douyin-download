@@ -240,7 +240,16 @@ class Request(object):
             params['timestamp'] = str(int(time.time()))
             encoded_params_string = urllib.parse.urlencode(params)
             url1 = url + '?' + encoded_params_string 
-            a_bogus = execjs.compile(open("8.动态url测试.js", 'r', encoding='utf-8').read()).call('get_a_bogus', url1)
+            # 使用资源路径查找JS文件（支持打包环境）
+            import sys
+            if hasattr(sys, '_MEIPASS'):
+                # PyInstaller打包环境
+                js_file_path = os.path.join(sys._MEIPASS, '8.动态url测试.js')
+            else:
+                # 开发环境，从项目根目录查找
+                js_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '8.动态url测试.js')
+            
+            a_bogus = execjs.compile(open(js_file_path, 'r', encoding='utf-8').read()).call('get_a_bogus', url1)
             params['a_bogus'] = a_bogus
             headers['referer'] = f'https://www.douyin.com/user/{params.get("sec_user_id", "")}?from_tab_name=main'
         # 记录API调用详情
