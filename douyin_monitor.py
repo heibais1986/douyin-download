@@ -20,6 +20,9 @@ from database import DouyinDatabase
 from auth_client import AuthClient
 import logging
 
+# 本地测试模式：设置为 True 可跳过所有认证检查
+DEBUG_SKIP_AUTH = True
+
 # 嵌入的Cookie指南内容
 COOKIE_GUIDE_CONTENT = """# 抖音Cookie获取指南
 
@@ -231,6 +234,11 @@ class DouyinMonitor:
 
     def check_authorization(self):
         """检查授权状态"""
+        # 本地测试模式：跳过所有认证检查
+        if DEBUG_SKIP_AUTH:
+            print("[DEBUG] 本地测试模式：跳过认证检查")
+            return True
+
         try:
             # 如果有本地token，正常验证
             if self.auth_client.auth_token:
@@ -252,17 +260,24 @@ class DouyinMonitor:
 
     def check_authorization_running(self):
         """运行中的认证检查（带缓存机制）"""
+        # 本地测试模式：跳过所有认证检查
+        if DEBUG_SKIP_AUTH:
+            return True
+
         current_time = datetime.now()
 
         # 检查是否需要重新验证
         if (self.last_auth_check is None or
             (current_time - self.last_auth_check).total_seconds() >= self.auth_check_interval):
 
-            self.log_message("开始检查认证状态")
+            # 只有非监控启动时才输出日志，避免重复日志
+            if not hasattr(self, '_monitor_starting'):
+                self.log_message("开始检查认证状态")
             valid, message = self.auth_client.verify_auth()
 
             if valid:
-                self.log_message(f"认证有效: {message}")
+                if not hasattr(self, '_monitor_starting'):
+                    self.log_message(f"认证有效: {message}")
                 self.last_auth_check = current_time
                 return True
             else:
@@ -297,6 +312,15 @@ class DouyinMonitor:
         """定时认证检查循环"""
         while self.auth_check_thread_running:
             try:
+                # 本地测试模式：跳过定时认证检查
+                if DEBUG_SKIP_AUTH:
+                    # 等待1小时后再次检查
+                    for _ in range(3600):  # 3600秒 = 1小时
+                        if not self.auth_check_thread_running:
+                            break
+                        time.sleep(1)
+                    continue
+
                 current_time = datetime.now()
 
                 # 检查是否需要重新验证（每1小时检查一次）
@@ -1264,8 +1288,9 @@ class DouyinMonitor:
         """异步开始监控（在后台线程中执行）"""
         try:
             # 启动前先检查认证
-            if not self.check_authorization_running():
-                # 认证失败，已在 check_authorization_running 中处理
+            # 注意：启动时的认证检查应该强制刷新，不依赖缓存
+            if not self._check_auth_for_monitoring():
+                # 认证失败，已在 _check_auth_for_monitoring 中处理
                 return
 
             # 先进行初始下载
@@ -1280,6 +1305,50 @@ class DouyinMonitor:
             # 重置按钮状态
             self.root.after(0, lambda: self.start_btn.config(state=tk.NORMAL))
             self.root.after(0, lambda: self.stop_btn.config(state=tk.DISABLED))
+
+    def _check_auth_for_monitoring(self):
+        """
+        监控启动时的认证检查
+        首次启动时跳过认证检查（假设已通过启动时认证），24小时后再进行认证
+        """
+        # 本地测试模式：跳过所有认证检查
+        if DEBUG_SKIP_AUTH:
+            self.log_message("[DEBUG] 本地测试模式：跳过认证检查")
+            return True
+
+        current_time = datetime.now()
+
+        # 如果从未检查过认证（首次启动），设置当前时间为上次检查时间，跳过本次认证
+        if self.last_auth_check is None:
+            self.log_message("监控启动：首次运行，跳过认证检查（24小时后自动检查）")
+            self.last_auth_check = current_time
+            return True
+
+        # 检查是否需要重新验证（每24小时检查一次）
+        if (current_time - self.last_auth_check).total_seconds() >= self.auth_check_interval:
+            self.log_message("监控启动：验证授权状态...")
+            valid, message = self.auth_client.verify_auth()
+
+            if valid:
+                self.log_message(f"✅ 授权验证通过: {message}")
+                # 更新缓存时间
+                self.last_auth_check = current_time
+                return True
+            else:
+                self.log_message(f"❌ 授权验证失败: {message}")
+                # 停止监控状态
+                self.is_monitoring = False
+                # 在主线程中重置按钮状态并显示授权界面
+                self.root.after(0, lambda: self.start_btn.config(state=tk.NORMAL))
+                self.root.after(0, lambda: self.stop_btn.config(state=tk.DISABLED))
+                self.root.after(0, self.show_auth_interface_from_monitoring)
+                return False
+        else:
+            # 24小时内，跳过认证检查
+            hours_passed = (current_time - self.last_auth_check).total_seconds() / 3600
+            hours_left = 24 - hours_passed
+            self.log_message(f"监控启动：距离上次认证检查还有 {hours_left:.1f} 小时，跳过验证")
+            return True
 
     def _initial_download_all_async(self):
         """异步初始下载所有主页视频（在后台线程中执行）"""
@@ -1405,7 +1474,14 @@ class DouyinMonitor:
                             temp_dir = tempfile.gettempdir()
                             single_douyin.aria2_conf = os.path.join(temp_dir, f'douyin_temp_{video["id"]}.txt')
                             single_douyin.save()
-                            single_douyin.download_all()
+
+                            # 执行下载并捕获异常
+                            try:
+                                single_douyin.download_all()
+                            except Exception as download_error:
+                                self.log_message(f"下载出错: {video_title} - {download_error}")
+                                # 继续下一个视频，不记录到数据库
+                                continue
 
                             # 记录到数据库
                             video_full_title = f"{video['desc']}_{video['time']}"
@@ -1718,7 +1794,20 @@ class DouyinMonitor:
 
                 # 保存和下载
                 single_douyin.save()
-                single_douyin.download_all()
+
+                # 执行下载并捕获异常
+                try:
+                    single_douyin.download_all()
+                except Exception as download_error:
+                    self.log_message(f"下载出错: {video_title} - {download_error}")
+                    # 清理临时aria2配置文件
+                    try:
+                        if os.path.exists(single_douyin.aria2_conf):
+                            os.remove(single_douyin.aria2_conf)
+                    except:
+                        pass
+                    # 继续下一个视频，不记录到数据库
+                    continue
 
                 # 清理临时aria2配置文件
                 try:

@@ -1,24 +1,30 @@
-https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000cujhh2fog65ue5m89ll0&line=0&file_id=f0337cbeff59419f9401d7ad59e53e98&sign=bbd6f35262b293c608db1ae452afca9c&is_play_url=1&source=PackSourceEnum_PUBLISH
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d50fojvog65oaht3jus0&line=0&file_id=b1b6eb71fe02415a8f5ada96fa1fda56&sign=67f78f49cbc0b51bd2bd92dc12386481&is_play_url=1&source=PackSourceEnum_PUBLISH
 	dir=.\./下载
-	out=@ 健康早餐当然离不开蛋白质和碳水啦#小熊多功能温泉蛋机 #小熊电器 #早餐 #早餐吃什么 #好物推荐🔥.mp4
-https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000cvl002fog65qnputtekg&line=0&file_id=a4c20d5b744a4dfa88be60e04cee486d&sign=458e6d7fbe96f53c87bdec5a05af09cc&is_play_url=1&source=PackSourceEnum_PUBLISH
+	out=今日快乐已送达 #脱口秀#观众搭茬#二狗脱口秀#每日一笑_1765877400.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0d00fg10000d4hc8t7og65o6cu8q6hg&line=0&file_id=0127fd9f6ea74cc2add332c96f0e9b1e&sign=217b56f6ac25baeed987fc4c03447988&is_play_url=1&source=PackSourceEnum_PUBLISH
 	dir=.\./下载
-	out=@ 平时吃鸡蛋的真的要备一个这样的温泉蛋机#小熊电器 #小熊多功能温泉蛋机 #营养早餐 #早餐 #煮蛋器.mp4
-https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000cvr2557og65ja68k8jpg&line=0&file_id=e431f106f5c84fda8da48ab57ec831a1&sign=2292810ab13fdbe64bc5417d481d432e&is_play_url=1&source=PackSourceEnum_PUBLISH
+	out=今日快乐已送达 #脱口秀#观众搭茬#二狗脱口秀#每日一笑_1763894678.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d5h21fvog65ov9l6cod0&line=0&file_id=09c7fbefa4b046f3b47951694b18a2aa&sign=5a726914c74455421142350825122de1&is_play_url=1&source=PackSourceEnum_PUBLISH
 	dir=.\./下载
-	out=@ 每天都要吃早餐的，这个小小的温泉蛋机太方便#小熊电器 #小熊多功能温泉蛋机 #早餐 #营养早餐.mp4
-https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d268qbnog65iim42jlqg&line=0&file_id=7bd9f17301bb4c50ad7e11ef02de4252&sign=b3eb9bc60c575d063aa51e5af0ddabb0&is_play_url=1&source=PackSourceEnum_PUBLISH
+	out=今日快乐已送达 #脱口秀#观众搭茬#二狗脱口秀#每日一笑_1768125000.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d5h21qfog65j6dtero4g&line=0&file_id=f42c6184d428490f8f62fbc5708d140d&sign=fe6457991e8c520be4986241be1dd05d&is_play_url=1&source=PackSourceEnum_PUBLISH
 	dir=.\./下载
-	out=@ 这个小小的温泉蛋机真的太方便 #小熊电器 #小熊多功能温泉蛋机 #营养早餐.mp4
-https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d267f0fog65mhs23nc9g&line=0&file_id=5418b283f0f04cde8b7869e6facd5df9&sign=cd7f27bdded1be193628719d376aa74d&is_play_url=1&source=PackSourceEnum_PUBLISH
+	out=今日快乐已送达 #脱口秀#观众搭茬#二狗脱口秀#每日一笑_1768103400.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0d00fg10000d5gag77og65mpbmv08ng&line=0&file_id=2827813fdfe64a6188cbc44ebb55939b&sign=3b0a6992e5645979e9b36f9d2d7eef30&is_play_url=1&source=PackSourceEnum_PUBLISH
 	dir=.\./下载
-	out=@ 真正好用的破壁机是细腻无渣的 #小熊电器 #小熊破壁机 #好物推荐🔥 #破壁机.mp4
-https://www.douyin.com/aweme/v1/play/?video_id=v0200fg10000d261ui7og65n3mbs4s30&line=0&file_id=52faa4a2894140dba2b9478968cef75b&sign=bc75dcfe2c1d7fcc60947538593249d0&is_play_url=1&source=PackSourceEnum_PUBLISH
+	out=今日快乐已送达 #脱口秀#观众搭茬#二狗脱口秀#每日一笑_1768035900.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d5gagmnog65uhmlbv9m0&line=0&file_id=34b3deedadb64d948d7c45deb4bda5b1&sign=ab20f9d70629274138b006f4b73ca6ec&is_play_url=1&source=PackSourceEnum_PUBLISH
 	dir=.\./下载
-	out=$ 朋友听劝，这玩意千万别碰~ #小熊电器 #小熊多功能温泉蛋机 #好物推荐 #早餐吃什么.mp4
-https://www.douyin.com/aweme/v1/play/?video_id=v0200fg10000d263ejvog65gvsmacrmg&line=0&file_id=ba6ce946d0ac453d8122b20a3fa5ce6e&sign=0d490ac927463c6b9d8a34e424fee3f2&is_play_url=1&source=PackSourceEnum_PUBLISH
+	out=今日快乐已送达 #脱口秀#观众搭茬#二狗脱口秀#每日一笑_1768014300.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d5fojavog65lr3kf2sqg&line=0&file_id=a3ad9ce9a3bf408ca00fd3f1e119add1&sign=169f41a420fbf91f39618e1e0b0ab4ad&is_play_url=1&source=PackSourceEnum_PUBLISH
 	dir=.\./下载
-	out=$ 千万不要买这个破壁机，容易上头 #小熊电器 #小熊低音降噪破壁机 #好物推荐 #破壁机.mp4
-https://www.douyin.com/aweme/v1/play/?video_id=v0200fg10000d2687kfog65icq1sejb0&line=0&file_id=f2a3aed5737c492a97c57ed30747082e&sign=1313c4ef608e6cc70606b8066e70e5c2&is_play_url=1&source=PackSourceEnum_PUBLISH
+	out=_1767950100.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0200fg10000d5fojffog65r9kf2pqmg&line=0&file_id=9cec0299dc8243e1bf27d34db801da32&sign=50188fecd531499c9d0266995aadb15d&is_play_url=1&source=PackSourceEnum_PUBLISH
 	dir=.\./下载
-	out=@ 早餐不知道怎么吃的，真的可以试试这个 #小熊电器 #小熊多功能温泉蛋机 #营养早餐.mp4
+	out=今日快乐已送达 #脱口秀#观众搭茬#二狗脱口秀#每日一笑_1767928500.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0300fg10000d5eapr7og65hu42nte8g&line=0&file_id=7840e40dcd3247a3a941cb47056d80e8&sign=60fc67002a7d01e7bda8f87303830b5f&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=今日快乐已送达 #脱口秀#观众搭茬#二狗脱口秀#每日一笑_1767863100.mp4
+https://www.douyin.com/aweme/v1/play/?video_id=v0d00fg10000d5eav4vog65p4tbt6o50&line=0&file_id=efde26e23e8143e39389028bd1ba3ef6&sign=5f12724af271fa1f834c11b6f46378e6&is_play_url=1&source=PackSourceEnum_PUBLISH
+	dir=.\./下载
+	out=今日快乐已送达 #脱口秀#观众搭茬#二狗脱口秀#每日一笑_1767841500.mp4

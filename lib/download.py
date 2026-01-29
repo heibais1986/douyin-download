@@ -35,13 +35,26 @@ def download(path, aria2_conf):
     logger.info('开始下载')
     command = [
         aria2c_path,
-        '-c', '--console-log-level', 'warn', '-d', path, '-i', aria2_conf
+        '-c', '--console-log-level', 'warn',
+        '--check-certificate=false',  # 禁用SSL证书验证
+        '--allow-overwrite=true',     # 允许覆盖已存在文件
+        '-d', path, '-i', aria2_conf
     ]
     try:
-        subprocess.run(command, check=True)
+        # 捕获输出以便调试
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
         logger.success('下载完成')
     except subprocess.CalledProcessError as e:
         logger.error(f'下载失败: {e}')
+        # 输出aria2c的错误信息以便调试
+        if e.stderr:
+            logger.error(f'aria2c错误输出: {e.stderr}')
+        if e.stdout:
+            logger.error(f'aria2c标准输出: {e.stdout}')
+        # 抛出异常让上层知道下载失败
+        raise Exception(f'下载失败: {e}')
     except FileNotFoundError:
         logger.error(f'无法执行aria2c: {aria2c_path}')
         logger.info('请确保aria2c已正确安装并可执行')
+        # 抛出异常让上层知道下载失败
+        raise Exception(f'无法执行aria2c: {aria2c_path}')

@@ -1,4 +1,4 @@
-## Pre-release RELEASE_TAG has been released for Windows, Linux & macOS.
+## Pre-release RELEASE_TAG has been released for Windows.
 
 ### Some software changes:
 

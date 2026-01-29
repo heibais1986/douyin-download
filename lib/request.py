@@ -8,6 +8,7 @@
 @Desc    :   抖音sign
 '''
 import os
+import time
 import random
 import re
 from urllib.parse import quote
@@ -33,7 +34,6 @@ class Request(object):
         'channel': 'channel_pc_web',
         'publish_video_strategy_type': '2',
         'source': 'channel_pc_web',
-        #'sec_user_id': 'MS4wLjABAAAAFFSebq0wtofl1v55ak14_sCqEotqFAnjBwz-6ZJ1J9Q',
         'personal_center_strategy': '1',
         'profile_other_record_enable': '1',
         'land_to': '1',
@@ -42,19 +42,19 @@ class Request(object):
         'pc_libra_divert': 'Windows',
         'support_h265': '1',
         'support_dash': '1',
-        'cpu_core_num': '12',
+        'cpu_core_num': '8',
         'version_code': '170400',
         'version_name': '17.4.0',
         'cookie_enabled': 'true',
-        'screen_width': '2560',
-        'screen_height': '1440',
+        'screen_width': '1920',
+        'screen_height': '1080',
         'browser_language': 'zh-CN',
         'browser_platform': 'Win32',
-        'browser_name': 'Edge',
-        'browser_version': '138.0.0.0',
+        'browser_name': 'Chrome',
+        'browser_version': '132.0.0.0',
         'browser_online': 'true',
         'engine_name': 'Blink',
-        'engine_version': '138.0.0.0',
+        'engine_version': '132.0.0.0',
         'os_name': 'Windows',
         'os_version': '10',
         'device_memory': '8',
@@ -62,28 +62,26 @@ class Request(object):
         'downlink': '10',
         'effective_type': '4g',
         'round_trip_time': '100',
-        'webid': '7483171167227659830',
-        'uifid': '164c22db5016193fd69c8bfb0b166ea3a563c2c88054b8eae8759946ea9753ce075876e6cf3d53a3bcd9946d4bdf98fa6c287a4c1ea3b4af412d09773df5a059c2aac5e18ea48ccf770159719ef7de9dae7f19f2a4df260de78f5da4573d0f6fca7705e137c8254d7aee892e0f69ec5dce475f001eeb7f1c752fa8b4242b3d1d577c033923602bef33c999a6fa40a21aaebb100a2d4922cc0fd7726536ee39d8569199066ea1734a2d059e089c060ddaa090f6c7d01d3605d080168f1f844844',
-        'verifyFp': 'verify_md709ed1_hLJwCn79_wgTF_4LHk_9OfY_cGEfYy6KzPVV',
-        'fp': 'verify_md709ed1_hLJwCn79_wgTF_4LHk_9OfY_cGEfYy6KzPVV',
-        'msToken': 'tajoEgRrE9BGs70xzQ6pnFSpxHHhgXNo8NCzZX9lrj0Br7CEfvdKQ_iel1riKEjxbfhRwBfudRFeMRIZJIAoa0hqbUjgI7Rc1scnTVDkBKtGLfsiCuvAMFUUwKqMkZPsjVpn1-tTEshU2t7NYq04nWRlfx2g_BIort57pq1vkPPenPraqwefP7I=',
-        'a_bogus': 'OvsVgtSwmxQbFdFGmCGA9tMUIudMrPWySBTdStOPyNu2Oq0YUuPnkntSboz54i5jg8BzwH37TD0AbxxcTsU0ZHrpqmpkS/4Wo0AII88L2qqmTlhpLNRpCLuNtJHG8QiEY/oyJ1hIlU8PIxC4DprhUQ5Je/TrsYkpQqrRdnUaY9tk60G9FrFKuPbdxXzN5R2-Zf==',
-        'x-secsdk-web-expire': '1754127410592',
-        'x-secsdk-web-signature': '12bf9723441ac11da4c9052092b0c10b',
+        'webid': '7513859400529511946',
+        'uifid': 'e438e504399eecf9c2f65594851517a53fcd0a47c3feace6f386418d12bbc04df48e44884eb112db37fe72d5435d21b6da0e51b513a8cb2b57492a0995d24d772f6cfd3d1776b840aac469c3bdd9274a5f67289cc8fdef6814c7e117c0a032504fc0fd31a61a75788f2ca404226b0db6e3746e19a5c1bb329337a3502e5540f971d0f0c745c7015ee45edb56770785034669036d8896c8bfef34dfdc03af6852',
+        'msToken': 'uGIyd_KgUAGjbJBiyk13cuMwGiS2smpcgDsocx3tgX6l4rNtiz7m2vkb877pQtHTDGgHVm--9n8eQt7kkEXK4_OhnD0rc8cRtnUKf2_rdui4rVWLta_OlKBunOA8FCle52dGsBL-ZgZDP2XXOVjnFNgeCqIMNuPYMqk_55dlUhBT',
+        'verifyFp': 'verify_mirgbi90_b61T1WIC_kWGd_4IvP_BHWD_FQeiTEuA8hhI',
+        'fp': 'verify_mirgbi90_b61T1WIC_kWGd_4IvP_BHWD_FQeiTEuA8hhI',
+        'x-secsdk-web-signature': 'c8e0fe804acde75c18f4e1d30e314799',
     }
     HEADERS = {
         'accept': 'application/json, text/plain, */*',
-        'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+        'accept-language': 'zh-CN,zh;q=0.9',
         'priority': 'u=1, i',
         'referer': 'https://www.douyin.com/user/MS4wLjABAAAAFFSebq0wtofl1v55ak14_sCqEotqFAnjBwz-6ZJ1J9Q?from_tab_name=main&vid=7530495662610238766',
-        'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Microsoft Edge";v="138"',
+        'sec-ch-ua': '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
         'sec-ch-ua-mobile': '?0',
         'sec-ch-ua-platform': '"Windows"',
         'sec-fetch-dest': 'empty',
         'sec-fetch-mode': 'cors',
         'sec-fetch-site': 'same-origin',
-        'uifid': '164c22db5016193fd69c8bfb0b166ea3a563c2c88054b8eae8759946ea9753ce075876e6cf3d53a3bcd9946d4bdf98fa6c287a4c1ea3b4af412d09773df5a059c2aac5e18ea48ccf770159719ef7de9dae7f19f2a4df260de78f5da4573d0f6fca7705e137c8254d7aee892e0f69ec5dce475f001eeb7f1c752fa8b4242b3d1d577c033923602bef33c999a6fa40a21aaebb100a2d4922cc0fd7726536ee39d8569199066ea1734a2d059e089c060ddaa090f6c7d01d3605d080168f1f844844',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0'
+        'uifid': 'e438e504399eecf9c2f65594851517a53fcd0a47c3feace6f386418d12bbc04df48e44884eb112db37fe72d5435d21b6da0e51b513a8cb2b57492a0995d24d772f6cfd3d1776b840aac469c3bdd9274a5f67289cc8fdef6814c7e117c0a032504fc0fd31a61a75788f2ca404226b0db6e3746e19a5c1bb329337a3502e5540f971d0f0c745c7015ee45edb56770785034669036d8896c8bfef34dfdc03af6852',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
     }
     filepath = os.path.dirname(__file__)
     try:
@@ -160,7 +158,7 @@ class Request(object):
                 call_name = 'sign_datail'
                 if 'reply' in uri:
                     call_name = 'sign_reply'
-                return self.SIGN.call(call_name, query, self.HEADERS.get("User-Agent"))
+                return self.SIGN.call(call_name, query, self.HEADERS.get("user-agent"))
             except Exception as e:
                 logger.warning(f"JavaScript签名失败: {e}，移除签名参数")
                 return None
@@ -225,6 +223,8 @@ class Request(object):
         return response.text
 
     def getJSON(self, uri: str, params: dict, data: dict = None, max_retries: int = 3):
+        import time
+        import urllib.parse
         url = f'{self.HOST}{uri}'
         params = self.get_params(params)
         # 尝试获取签名，如果失败则不添加签名参数
@@ -234,14 +234,22 @@ class Request(object):
         
         # 动态设置Referer
         headers = self.HEADERS.copy()
-        if '/user/profile/other/' in uri:
-            headers['Referer'] = f'https://www.douyin.com/user/{params.get("sec_user_id", "")}'
-        elif '/search/' in uri:
-            headers['Referer'] = 'https://www.douyin.com/search/'
-        
+        if '/search/' in uri:
+            headers['referer'] = 'https://www.douyin.com/search/'
+        elif '/user/profile/other/' in uri:
+            params['timestamp'] = str(int(time.time()))
+            encoded_params_string = urllib.parse.urlencode(params)
+            url1 = url + '?' + encoded_params_string 
+            a_bogus = execjs.compile(open("8.动态url测试.js", 'r', encoding='utf-8').read()).call('get_a_bogus', url1)
+            params['a_bogus'] = a_bogus
+            headers['referer'] = f'https://www.douyin.com/user/{params.get("sec_user_id", "")}?from_tab_name=main'
         # 记录API调用详情
+        # encoded_params_string = urllib.parse.urlencode(params)
+        # url = url + '?' + encoded_params_string 
         logger.info(f'API调用: {uri}')
         logger.info(f'完整URL: {url}')
+        logger.info(f'完整headers: {headers}')
+        logger.info(f'完整params: {params}')
         logger.info(f'关键参数: sec_user_id={params.get("sec_user_id", "N/A")}, max_cursor={params.get("max_cursor", "N/A")}, count={params.get("count", "N/A")}')
         logger.info(f'请求方法: {"POST" if data else "GET"}')
         

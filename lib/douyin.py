@@ -10,6 +10,7 @@
 
 import os
 import re
+import time
 from threading import Lock
 from typing import List
 from urllib.parse import parse_qs, quote, unquote, urlparse
@@ -73,7 +74,14 @@ class Douyin(object):
             if hostname and hostname.endswith('douyin.com'):
                 if hostname == 'v.douyin.com':
                     target = url_redirect(target)
-                *_, _type, id = unquote(urlparse(target).path.strip('/')).split('/')
+                # 解析URL路径，提取类型和ID
+                path = unquote(urlparse(target).path.strip('/'))
+                path_parts = path.split('/')
+                if len(path_parts) >= 2:
+                    _type = path_parts[-2] if len(path_parts) >= 2 else path_parts[0]
+                    id = path_parts[-1]
+                else:
+                    quit(f'[{target}]URL格式错误，无法解析')
                 self.url = target
                 # 自动识别 单个作品 搜索、音乐、合集
                 if _type in ['video', 'note', 'music', 'hashtag', 'collection']:
@@ -87,6 +95,9 @@ class Douyin(object):
                         self.type = 'search'
                     else:
                         self.type = search_type[0]
+                elif _type == 'user':
+                    # 用户主页URL，id就是sec_user_id
+                    pass
             # 输入非链接
             else:
                 id = target
@@ -232,25 +243,59 @@ class Douyin(object):
             quit('作品详情获取失败')
 
     def get_user(self):
+        # 根据最新抓包更新参数
         params = {
-            "publish_video_strategy_type": 2,
-            "sec_user_id": self.id, 
-            "personal_center_strategy": 1,
-            "source": "channel_pc_web",
-            "profile_other_record_enable": 1,
-            "land_to": 1,
-            "support_h265": 1,
-            "support_dash": 1
+            'device_platform': 'webapp',
+            'aid': '6383',
+            'channel': 'channel_pc_web',
+            'publish_video_strategy_type': '2',
+            'source': 'channel_pc_web',
+            'sec_user_id': self.id,
+            'personal_center_strategy': '1',
+            'profile_other_record_enable': '1',
+            'land_to': '1',
+            'update_version_code': '170400',
+            'pc_client_type': '1',
+            'pc_libra_divert': 'Windows',
+            'support_h265': '1',
+            'support_dash': '1',
+            'cpu_core_num': '8',
+            'version_code': '170400',
+            'version_name': '17.4.0',
+            'cookie_enabled': 'true',
+            'screen_width': '1920',
+            'screen_height': '1080',
+            'browser_language': 'zh-CN',
+            'browser_platform': 'Win32',
+            'browser_name': 'Chrome',
+            'browser_version': '132.0.0.0',
+            'browser_online': 'true',
+            'engine_name': 'Blink',
+            'engine_version': '132.0.0.0',
+            'os_name': 'Windows',
+            'os_version': '10',
+            'device_memory': '8',
+            'platform': 'PC',
+            'downlink': '10',
+            'effective_type': '4g',
+            'round_trip_time': '50',
         }
-        
+
         # 首先尝试主要API
         resp = self.request.getJSON('/aweme/v1/web/user/profile/other/', params)
-        logger.success(f"----------------主要API响应: {resp}")
+        logger.info(f"主要API响应: {resp}")
+
+        # 检查主要API是否返回有效数据（包括空响应或响应为{}的情况）
         if resp and resp.get('user'):
             self.info = resp.get('user', {})
             logger.success(f"成功获取用户信息: {self.info.get('nickname', '未知用户')}")
         else:
-            logger.warning("主要API失败，尝试备用方法")
+            # 主要API返回空或无效数据，直接尝试备用API
+            if not resp:
+                logger.warning("主要API返回空，直接尝试备用API")
+            else:
+                logger.warning("主要API返回无效数据，尝试备用方法")
+
             # 尝试备用API
             try:
                 self.get_user_v2()
@@ -328,9 +373,48 @@ class Douyin(object):
                 # ['post', 'like', 'favorite', 'search', 'music','hashtag', 'collection']
                 if self.type == 'post':
                     uri = '/aweme/v1/web/aweme/post/'
-                    params = {"publish_video_strategy_type": 2, "max_cursor": max_cursor, "locate_query": False,
-                              'show_live_replay_strategy': 1, 'need_time_list': 0, 'time_list_query': 0, 'whale_cut_token': '', 'count': 5, "sec_user_id": self.id
-                              }
+                    # 根据最新抓包更新参数
+                    params = {
+                        'device_platform': 'webapp',
+                        'aid': '6383',
+                        'channel': 'channel_pc_web',
+                        'sec_user_id': self.id,
+                        'max_cursor': max_cursor,
+                        'locate_query': 'false',
+                        'show_live_replay_strategy': '1',
+                        'need_time_list': '1',
+                        'time_list_query': '0',
+                        'whale_cut_token': '',
+                        'cut_version': '1',
+                        'count': '18',
+                        'publish_video_strategy_type': '2',
+                        'from_user_page': '1',
+                        'update_version_code': '170400',
+                        'pc_client_type': '1',
+                        'pc_libra_divert': 'Windows',
+                        'support_h265': '1',
+                        'support_dash': '1',
+                        'cpu_core_num': '8',
+                        'version_code': '290100',
+                        'version_name': '29.1.0',
+                        'cookie_enabled': 'true',
+                        'screen_width': '1920',
+                        'screen_height': '1080',
+                        'browser_language': 'zh-CN',
+                        'browser_platform': 'Win32',
+                        'browser_name': 'Chrome',
+                        'browser_version': '132.0.0.0',
+                        'browser_online': 'true',
+                        'engine_name': 'Blink',
+                        'engine_version': '132.0.0.0',
+                        'os_name': 'Windows',
+                        'os_version': '10',
+                        'device_memory': '8',
+                        'platform': 'PC',
+                        'downlink': '10',
+                        'effective_type': '4g',
+                        'round_trip_time': '50',
+                    }
                 elif self.type == 'like':
                     uri = '/aweme/v1/web/aweme/favorite/'
                     params = {"publish_video_strategy_type": 2, "max_cursor": max_cursor,
@@ -663,13 +747,10 @@ class Douyin(object):
                             # _.append(
                             #     f'{line["download_addr"]}\n\tdir={self.down_path}\n\tout={filename}.mp4\n\tuser-agent={
                             #         self.request.HEADERS.get("User-Agent")}\n\theader="Cookie:msToken={self.request.get_ms_token()}"\n')
-                            # 提供UA
-                            # _.append(
-                            #     f'{line["download_addr"]}\n\tdir={self.down_path}\n\tout={
-                            #         filename}.mp4\n\tuser-agent={self.request.HEADERS.get("User-Agent")}\n')
-                            # 正常下载
-                            _.append(f'{line["download_addr"]}\n\tdir={
-                                     self.down_path}\n\tout={filename}.mp4\n')
+                            # 提供UA和Cookie
+                            # 构建Cookie字符串
+                            cookie_str = '; '.join([f"{k}={v}" for k, v in self.request.COOKIES.items()])
+                            _.append(f'{line["download_addr"]}\n\tdir={self.down_path}\n\tout={filename}.mp4\n\treferer=https://www.douyin.com/\n\tuser-agent={self.request.HEADERS.get("User-Agent")}\n\theader="Cookie:{cookie_str}"\n')
                         else:
                             logger.error("下载地址错误")
                 f.writelines(_)
