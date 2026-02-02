@@ -10,7 +10,7 @@ from machine_code import generate_machine_code, validate_machine_code
 
 
 class AuthClient:
-    def __init__(self, server_url='https://dy.gta1.ggff.net/'):
+    def __init__(self, server_url='https://dy.xxzd.de5.net/'):
         self.server_url = server_url
         self.machine_code = None
         self.auth_token = None

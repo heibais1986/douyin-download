@@ -122,7 +122,7 @@ class DouyinMonitor:
         self.db = DouyinDatabase(db_path)
 
         # 初始化授权系统
-        self.auth_client = AuthClient('https://dy.gta1.ggff.net')
+        self.auth_client = AuthClient('https://dy.xxzd.de5.net')
         self.auth_config_file = 'auth_config.json'
         self.load_auth_config()
 
@@ -1086,7 +1086,7 @@ class DouyinMonitor:
         """上传监控信息到服务器"""
         import requests
 
-        server_url = 'https://dy.gta1.ggff.net'  # 或者从配置中读取
+        server_url = 'https://dy.xxzd.de5.net'  # 或者从配置中读取
 
         try:
             response = requests.post(

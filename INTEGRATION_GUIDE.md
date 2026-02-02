@@ -39,7 +39,7 @@ from auth_client import AuthClient
 class YourDouyinMonitor:
     def __init__(self, root):
         self.root = root
-        self.auth_client = AuthClient('https://dy.gta1.ggff.net')
+        self.auth_client = AuthClient('https://dy.xxzd.de5.net')
         self.auth_config_file = 'auth_config.json'
 
         # 加载授权配置
