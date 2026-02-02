@@ -225,6 +225,15 @@ class Request(object):
     def getJSON(self, uri: str, params: dict, data: dict = None, max_retries: int = 3):
         import time
         import urllib.parse
+        # 获取当前Python脚本的绝对目录（打包后会指向可执行文件的资源目录）
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        # 拼接node_modules的绝对路径
+        NODE_MODULES_PATH = os.path.join(BASE_DIR, "node_modules")
+        # 设置Node的模块查找环境变量（关键，让Node能找到内置的jsdom）
+        os.environ["NODE_PATH"] = NODE_MODULES_PATH
+        # 可选：指定execjs使用Node引擎（避免默认用其他JS引擎导致不兼容）
+        node_env = execjs.get(execjs.runtime_names.Node)
+        
         url = f'{self.HOST}{uri}'
         params = self.get_params(params)
         # 尝试获取签名，如果失败则不添加签名参数
@@ -249,7 +258,7 @@ class Request(object):
                 # 开发环境，从lib/js目录查找
                 js_file_path = os.path.join(os.path.dirname(__file__), 'js', '8.动态url测试.js')
             
-            a_bogus = execjs.compile(open(js_file_path, 'r', encoding='utf-8').read()).call('get_a_bogus', url1)
+            a_bogus = node_env.compile(open(js_file_path, 'r', encoding='utf-8').read()).call('get_a_bogus', url1)
             params['a_bogus'] = a_bogus
             headers['referer'] = f'https://www.douyin.com/user/{params.get("sec_user_id", "")}?from_tab_name=main'
         # 记录API调用详情
