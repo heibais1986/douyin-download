@@ -3215,3 +3215,171 @@
 2026-02-02 10:21:52,476 - INFO - ✅ 本次监控未发现新视频
 2026-02-02 10:21:59,579 - INFO - 配置已保存
 2026-02-02 10:21:59,844 - INFO - 定时认证检查线程已停止
+2026-02-02 16:34:04,572 - INFO - 定时认证检查线程已启动
+2026-02-02 16:34:06,833 - INFO - 配置已保存
+2026-02-02 16:34:07,574 - INFO - 定时认证检查线程已停止
+2026-02-02 16:34:21,997 - INFO - 定时认证检查：开始验证授权状态
+2026-02-02 16:34:21,997 - INFO - 定时认证检查线程已启动
+2026-02-02 16:34:24,448 - INFO - 定时认证检查：认证有效 - 验证成功
+2026-02-02 16:34:24,622 - INFO - 定时认证检查通过
+2026-02-02 16:34:46,623 - INFO - 添加主页: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 16:34:52,376 - INFO - 配置已保存
+2026-02-02 16:34:52,376 - INFO - 已自动保存当前配置
+2026-02-02 16:34:52,378 - INFO - 监控启动：距离上次认证检查还有 24.0 小时，跳过验证
+2026-02-02 16:34:52,407 - INFO - 开始初始下载所有主页视频...
+2026-02-02 16:34:52,421 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 16:34:52,427 - INFO - 调试: 初始下载时读取的时间过滤配置 = '6000' (类型: <class 'str'>)
+2026-02-02 16:34:52,440 - INFO - 时间过滤设置为6000分钟，初始下载获取约100个视频
+2026-02-02 16:34:53,676 - INFO - 监控信息上传成功
+2026-02-02 16:34:53,678 - INFO - ✅ 监控信息已成功上传到服务器
+2026-02-02 16:34:57,664 - INFO - 按 6000 分钟时间过滤后剩余 0 个视频需要下载
+2026-02-02 16:34:57,670 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 16:34:57,676 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 16:34:57,684 - INFO - 调试: 初始下载时读取的时间过滤配置 = '6000' (类型: <class 'str'>)
+2026-02-02 16:34:57,694 - INFO - 时间过滤设置为6000分钟，初始下载获取约100个视频
+2026-02-02 16:35:07,367 - INFO - 按 6000 分钟时间过滤后剩余 1 个视频需要下载
+2026-02-02 16:35:07,369 - INFO - 过滤后需要下载 1 个视频
+2026-02-02 16:35:07,376 - INFO - 下载视频 1/1: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划
+2026-02-02 16:35:09,634 - INFO - 完成下载: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划
+2026-02-02 16:35:09,646 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 16:35:09,656 - INFO - 初始下载完成，开始监控...
+2026-02-02 16:35:09,664 - INFO - 时间过滤设置为6000分钟，获取200个视频进行检查
+2026-02-02 16:35:15,361 - INFO - 时间过滤设置为6000分钟，获取200个视频进行检查
+2026-02-02 16:35:25,045 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 16:35:25,046 - INFO - ✅ 本次监控未发现新视频
+2026-02-02 16:40:25,306 - INFO - 时间过滤设置为6000分钟，获取200个视频进行检查
+2026-02-02 16:40:29,869 - INFO - 时间过滤设置为6000分钟，获取200个视频进行检查
+2026-02-02 16:40:39,196 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 16:40:39,199 - INFO - ✅ 本次监控未发现新视频
+2026-02-02 16:45:22,845 - INFO - 配置已保存
+2026-02-02 16:45:22,973 - INFO - 定时认证检查线程已停止
+2026-02-02 17:00:50,357 - INFO - 定时认证检查：开始验证授权状态
+2026-02-02 17:00:50,358 - INFO - 定时认证检查线程已启动
+2026-02-02 17:01:30,874 - INFO - 已自动保存当前配置
+2026-02-02 17:01:30,875 - INFO - 监控启动：首次运行，跳过认证检查（24小时后自动检查）
+2026-02-02 17:01:30,878 - INFO - 开始初始下载所有主页视频...
+2026-02-02 17:01:30,880 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 17:01:30,885 - INFO - 调试: 初始下载时读取的时间过滤配置 = '6000' (类型: <class 'str'>)
+2026-02-02 17:01:30,891 - INFO - 时间过滤设置为6000分钟，初始下载获取约100个视频
+2026-02-02 17:01:32,776 - WARNING - 定时认证检查：认证无效 - 网络错误: HTTPSConnectionPool(host='dy.xxzd.de5.net', port=443): Max retries exceeded with url: /api/auth/verify (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000020724A97F80>, 'Connection to dy.xxzd.de5.net timed out. (connect timeout=30)'))
+2026-02-02 17:01:32,777 - INFO - 停止监控
+2026-02-02 17:01:36,139 - INFO - 按 6000 分钟时间过滤后剩余 0 个视频需要下载
+2026-02-02 17:01:36,181 - INFO - 初始下载失败 https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main: invalid command name ".!frame2.!labelframe.!frame.!treeview"
+2026-02-02 17:01:36,183 - INFO - 初始下载完成，开始监控...
+2026-02-02 17:01:50,891 - ERROR - 上传监控信息异常: HTTPSConnectionPool(host='dy.xxzd.de5.net', port=443): Max retries exceeded with url: /api/auth/upload_monitor (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x0000020727DF80E0>, 'Connection to dy.xxzd.de5.net timed out. (connect timeout=10)'))
+2026-02-02 17:01:50,891 - INFO - ❌ 监控信息上传失败，将在 5 分钟后重试 (1/10)
+2026-02-02 17:04:47,649 - INFO - 定时认证检查线程已停止
+2026-02-02 17:04:51,291 - INFO - 定时认证检查线程已启动
+2026-02-02 17:04:58,769 - INFO - 已自动保存当前配置
+2026-02-02 17:04:58,771 - INFO - [DEBUG] 本地测试模式：跳过认证检查
+2026-02-02 17:04:58,773 - INFO - 开始初始下载所有主页视频...
+2026-02-02 17:04:58,777 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 17:04:58,783 - INFO - 调试: 初始下载时读取的时间过滤配置 = '6000' (类型: <class 'str'>)
+2026-02-02 17:04:58,790 - INFO - 时间过滤设置为6000分钟，初始下载获取约100个视频
+2026-02-02 17:05:03,741 - INFO - 按 6000 分钟时间过滤后剩余 0 个视频需要下载
+2026-02-02 17:05:03,743 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 17:05:03,750 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 17:05:03,757 - INFO - 调试: 初始下载时读取的时间过滤配置 = '6000' (类型: <class 'str'>)
+2026-02-02 17:05:03,768 - INFO - 时间过滤设置为6000分钟，初始下载获取约100个视频
+2026-02-02 17:05:12,120 - INFO - 按 6000 分钟时间过滤后剩余 1 个视频需要下载
+2026-02-02 17:05:12,120 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 17:05:12,123 - INFO - 过滤后需要下载 0 个视频
+2026-02-02 17:05:12,131 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 17:05:12,137 - INFO - 初始下载完成，开始监控...
+2026-02-02 17:05:12,144 - INFO - 时间过滤设置为6000分钟，获取200个视频进行检查
+2026-02-02 17:05:16,788 - INFO - 时间过滤设置为6000分钟，获取200个视频进行检查
+2026-02-02 17:05:18,792 - ERROR - 上传监控信息异常: HTTPSConnectionPool(host='dy.xxzd.de5.net', port=443): Max retries exceeded with url: /api/auth/upload_monitor (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000001EAA1306DE0>, 'Connection to dy.xxzd.de5.net timed out. (connect timeout=10)'))
+2026-02-02 17:05:18,792 - INFO - ❌ 监控信息上传失败，将在 5 分钟后重试 (1/10)
+2026-02-02 17:05:24,980 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 17:05:24,981 - INFO - ✅ 本次监控未发现新视频
+2026-02-02 17:05:35,315 - INFO - 定时认证检查线程已停止
+2026-02-02 17:12:29,960 - INFO - 定时认证检查线程已启动
+2026-02-02 17:12:36,868 - INFO - 已自动保存当前配置
+2026-02-02 17:12:36,870 - INFO - [DEBUG] 本地测试模式：跳过认证检查
+2026-02-02 17:12:36,873 - INFO - 开始初始下载所有主页视频...
+2026-02-02 17:12:36,874 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 17:12:36,881 - INFO - 调试: 初始下载时读取的时间过滤配置 = '6000' (类型: <class 'str'>)
+2026-02-02 17:12:36,887 - INFO - 时间过滤设置为6000分钟，初始下载获取约100个视频
+2026-02-02 17:12:42,118 - INFO - 按 6000 分钟时间过滤后剩余 0 个视频需要下载
+2026-02-02 17:12:42,121 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 17:12:42,127 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 17:12:42,135 - INFO - 调试: 初始下载时读取的时间过滤配置 = '6000' (类型: <class 'str'>)
+2026-02-02 17:12:42,147 - INFO - 时间过滤设置为6000分钟，初始下载获取约100个视频
+2026-02-02 17:12:51,658 - INFO - 按 6000 分钟时间过滤后剩余 1 个视频需要下载
+2026-02-02 17:12:51,659 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 17:12:51,661 - INFO - 过滤后需要下载 0 个视频
+2026-02-02 17:12:51,665 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 17:12:51,672 - INFO - 初始下载完成，开始监控...
+2026-02-02 17:12:51,682 - INFO - 时间过滤设置为6000分钟，获取200个视频进行检查
+2026-02-02 17:12:56,899 - ERROR - 上传监控信息异常: HTTPSConnectionPool(host='dy.xxzd.de5.net', port=443): Max retries exceeded with url: /api/auth/upload_monitor (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000002549A812F00>, 'Connection to dy.xxzd.de5.net timed out. (connect timeout=10)'))
+2026-02-02 17:12:56,899 - INFO - ❌ 监控信息上传失败，将在 5 分钟后重试 (1/10)
+2026-02-02 17:12:56,926 - INFO - 时间过滤设置为6000分钟，获取200个视频进行检查
+2026-02-02 17:13:05,821 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 17:13:05,824 - INFO - ✅ 本次监控未发现新视频
+2026-02-02 17:13:11,094 - INFO - 停止监控
+2026-02-02 17:13:12,980 - INFO - 定时认证检查线程已停止
+2026-02-02 17:18:55,424 - INFO - 定时认证检查线程已启动
+2026-02-02 17:19:01,751 - INFO - 配置已保存
+2026-02-02 17:19:01,751 - INFO - 已自动保存当前配置
+2026-02-02 17:19:01,752 - INFO - [DEBUG] 本地测试模式：跳过认证检查
+2026-02-02 17:19:01,754 - INFO - 开始初始下载所有主页视频...
+2026-02-02 17:19:01,756 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 17:19:01,764 - INFO - 调试: 初始下载时读取的时间过滤配置 = '10080' (类型: <class 'str'>)
+2026-02-02 17:19:01,770 - INFO - 时间过滤设置为10080分钟，初始下载获取约100个视频
+2026-02-02 17:19:07,010 - INFO - 按 10080 分钟时间过滤后剩余 0 个视频需要下载
+2026-02-02 17:19:07,016 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 17:19:07,022 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 17:19:07,031 - INFO - 调试: 初始下载时读取的时间过滤配置 = '10080' (类型: <class 'str'>)
+2026-02-02 17:19:07,043 - INFO - 时间过滤设置为10080分钟，初始下载获取约100个视频
+2026-02-02 17:19:15,892 - INFO - 按 10080 分钟时间过滤后剩余 2 个视频需要下载
+2026-02-02 17:19:15,892 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 17:19:15,894 - INFO - 过滤后需要下载 1 个视频
+2026-02-02 17:19:15,899 - INFO - 下载视频 1/1: #武术 无极生太极 太极生两仪 #伯希和冲锋衣  #伯希和山野冲锋衣 #奔赴自然 #户外衣橱
+2026-02-02 17:19:17,847 - INFO - 完成下载: #武术 无极生太极 太极生两仪 #伯希和冲锋衣  #伯希和山野冲锋衣 #奔赴自然 #户外衣橱
+2026-02-02 17:19:17,855 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 17:19:17,863 - INFO - 初始下载完成，开始监控...
+2026-02-02 17:19:17,871 - INFO - 时间过滤设置为10080分钟，获取336个视频进行检查
+2026-02-02 17:19:22,238 - ERROR - 上传监控信息异常: HTTPSConnectionPool(host='dy.xxzd.de5.net', port=443): Max retries exceeded with url: /api/auth/upload_monitor (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000001C9415660F0>, 'Connection to dy.xxzd.de5.net timed out. (connect timeout=10)'))
+2026-02-02 17:19:22,238 - INFO - ❌ 监控信息上传失败，将在 5 分钟后重试 (1/10)
+2026-02-02 17:19:23,147 - INFO - 时间过滤设置为10080分钟，获取336个视频进行检查
+2026-02-02 17:19:32,409 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 17:19:32,410 - INFO - 视频已下载，跳过: #武术 无极生太极 太极生两仪 #伯希和冲锋衣  #伯希和山野冲锋衣 #奔赴自然 #户外衣橱_1769419644 (ID: 7599599453460303138)
+2026-02-02 17:19:32,414 - INFO - ✅ 本次监控未发现新视频
+2026-02-02 17:19:55,821 - INFO - 停止监控
+2026-02-02 17:19:59,536 - INFO - 配置已保存
+2026-02-02 17:20:00,461 - INFO - 定时认证检查线程已停止
+2026-02-02 17:20:03,707 - INFO - 定时认证检查线程已启动
+2026-02-02 17:20:23,528 - INFO - 配置已保存
+2026-02-02 17:20:23,719 - INFO - 定时认证检查线程已停止
+2026-02-02 17:24:54,054 - INFO - 定时认证检查线程已启动
+2026-02-02 17:24:59,374 - INFO - 配置已保存
+2026-02-02 17:24:59,374 - INFO - 已自动保存当前配置
+2026-02-02 17:24:59,375 - INFO - [DEBUG] 本地测试模式：跳过认证检查
+2026-02-02 17:24:59,378 - INFO - 开始初始下载所有主页视频...
+2026-02-02 17:24:59,382 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 17:24:59,390 - INFO - 调试: 初始下载时读取的时间过滤配置 = '8640' (类型: <class 'str'>)
+2026-02-02 17:24:59,397 - INFO - 时间过滤设置为8640分钟，初始下载获取约100个视频
+2026-02-02 17:25:01,353 - INFO - 监控信息上传成功
+2026-02-02 17:25:01,354 - INFO - ✅ 监控信息已成功上传到服务器
+2026-02-02 17:25:04,666 - INFO - 按 8640 分钟时间过滤后剩余 0 个视频需要下载
+2026-02-02 17:25:04,669 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA8Ag2TMrWvfZWpLywypFRGhoL2_A8FdXawWfuh29bJWCJ_BCr23KY0S9O76eC4_oC?from_tab_name=main
+2026-02-02 17:25:04,678 - INFO - 开始初始下载主页: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 17:25:04,686 - INFO - 调试: 初始下载时读取的时间过滤配置 = '8640' (类型: <class 'str'>)
+2026-02-02 17:25:04,696 - INFO - 时间过滤设置为8640分钟，初始下载获取约100个视频
+2026-02-02 17:25:14,102 - INFO - 按 8640 分钟时间过滤后剩余 1 个视频需要下载
+2026-02-02 17:25:14,103 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 17:25:14,105 - INFO - 过滤后需要下载 0 个视频
+2026-02-02 17:25:14,111 - INFO - 初始下载完成: https://www.douyin.com/user/MS4wLjABAAAA32zID_nFiynF8R4rKuCM3xM1gMIQbD9IL-Ig0vxM6Zg?from_tab_name=main&vid=7589951074287488307
+2026-02-02 17:25:14,118 - INFO - 初始下载完成，开始监控...
+2026-02-02 17:25:14,130 - INFO - 时间过滤设置为8640分钟，获取288个视频进行检查
+2026-02-02 17:25:19,090 - INFO - 时间过滤设置为8640分钟，获取288个视频进行检查
+2026-02-02 17:25:28,182 - INFO - 视频已下载，跳过: #飞天小麻花 中华武术就在这一招一式之中 #圆你一个武侠梦 #双手剑 #武术 #百young非遗计划_1769765261 (ID: 7601083727527152930)
+2026-02-02 17:25:28,183 - INFO - ✅ 本次监控未发现新视频
+2026-02-02 17:25:31,948 - INFO - 停止监控
+2026-02-02 17:25:33,279 - INFO - 配置已保存
+2026-02-02 17:25:34,074 - INFO - 定时认证检查线程已停止
+2026-02-02 17:25:37,495 - INFO - 定时认证检查线程已启动
+2026-02-02 17:25:46,795 - INFO - 尝试查找image.png，共4个路径
+2026-02-02 17:25:46,796 - INFO - ✅ 找到图片文件: static/image.png
+2026-02-02 17:25:57,645 - INFO - 配置已保存
+2026-02-02 17:25:58,508 - INFO - 定时认证检查线程已停止

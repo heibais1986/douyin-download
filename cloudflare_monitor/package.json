@@ -1,0 +1,26 @@
+{
+  "name": "douyin-monitor-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for Douyin video monitoring",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "kv:create": "wrangler kv:namespace create MONITOR_KV",
+    "kv:create-dev": "wrangler kv:namespace create MONITOR_KV --env dev",
+    "kv:list": "wrangler kv:key list --binding=MONITOR_KV",
+    "kv:delete": "wrangler kv:key delete --binding=MONITOR_KV"
+  },
+  "keywords": [
+    "douyin",
+    "monitor",
+    "cloudflare",
+    "worker"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

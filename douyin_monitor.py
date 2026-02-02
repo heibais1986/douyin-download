@@ -759,7 +759,9 @@ class DouyinMonitor:
             "download_path": "./下载",
             "cookie": "",
             "homepage_list": [],
-            "video_time_filter": "",  # 下载多少分钟内的视频，留空则下载全部
+            "video_time_filter": "",  # 下载多少分钟内的视频，留空则下载全部 - 向后兼容
+            "time_filter_type": "all",  # 时间过滤类型: hour/day/month/all
+            "time_filter_value": 1,  # 时间过滤数值
             "use_proxy": False,
             "proxy_url": ""
         }
@@ -817,7 +819,7 @@ class DouyinMonitor:
         help_btn = ttk.Button(self.config_frame, text="如何提取", command=self.show_cookie_guide)
         help_btn.grid(row=0, column=2, padx=(0, 5))
 
-        # 检查间隔和时间过滤放在一行
+        # 检查间隔设置
         interval_frame = ttk.Frame(self.config_frame)
         interval_frame.grid(row=1, column=0, columnspan=5, sticky=(tk.W, tk.E), pady=(2, 0))
 
@@ -826,11 +828,64 @@ class DouyinMonitor:
         interval_entry = ttk.Entry(interval_frame, textvariable=self.interval_var, width=5)
         interval_entry.pack(side=tk.LEFT, padx=(0, 15))
 
-        ttk.Label(interval_frame, text="下载分钟:").pack(side=tk.LEFT, padx=(0, 2))
-        self.time_filter_var = tk.StringVar(value=str(self.config.get("video_time_filter", "")))
-        time_filter_entry = ttk.Entry(interval_frame, textvariable=self.time_filter_var, width=5)
-        time_filter_entry.pack(side=tk.LEFT, padx=(0, 5))
-        ttk.Label(interval_frame, text="(如不填则下载所有视频)").pack(side=tk.LEFT)
+        # 时间过滤设置 - 使用单选按钮
+        ttk.Label(interval_frame, text="下载时间:").pack(side=tk.LEFT, padx=(0, 2))
+        
+        self.time_filter_type_var = tk.StringVar(value=self.config.get("time_filter_type", "all"))
+        self.time_filter_value_var = tk.StringVar(value=str(self.config.get("time_filter_value", 1)))
+        
+        time_filter_frame = ttk.Frame(interval_frame)
+        time_filter_frame.pack(side=tk.LEFT, padx=(0, 5))
+        
+        # 从配置中读取保存的值
+        time_filter_type = self.config.get("time_filter_type", "all")
+        time_filter_value = self.config.get("time_filter_value", 1)
+        
+        # 设置默认值
+        if time_filter_type == "hour":
+            hour_val = str(time_filter_value)
+            day_val = "1"
+            month_val = "1"
+        elif time_filter_type == "day":
+            hour_val = "1"
+            day_val = str(time_filter_value)
+            month_val = "1"
+        elif time_filter_type == "month":
+            hour_val = "1"
+            day_val = "1"
+            month_val = str(time_filter_value)
+        else:  # all
+            hour_val = "1"
+            day_val = "1"
+            month_val = "1"
+        
+        # 小时选项
+        self.hour_value_var = tk.StringVar(value=hour_val)
+        hour_radio = ttk.Radiobutton(time_filter_frame, text="", variable=self.time_filter_type_var, value="hour")
+        hour_radio.pack(side=tk.LEFT)
+        hour_entry = ttk.Entry(time_filter_frame, textvariable=self.hour_value_var, width=3)
+        hour_entry.pack(side=tk.LEFT)
+        ttk.Label(time_filter_frame, text="小时").pack(side=tk.LEFT, padx=(0, 10))
+        
+        # 天选项
+        self.day_value_var = tk.StringVar(value=day_val)
+        day_radio = ttk.Radiobutton(time_filter_frame, text="", variable=self.time_filter_type_var, value="day")
+        day_radio.pack(side=tk.LEFT)
+        day_entry = ttk.Entry(time_filter_frame, textvariable=self.day_value_var, width=3)
+        day_entry.pack(side=tk.LEFT)
+        ttk.Label(time_filter_frame, text="天").pack(side=tk.LEFT, padx=(0, 10))
+        
+        # 月选项
+        self.month_value_var = tk.StringVar(value=month_val)
+        month_radio = ttk.Radiobutton(time_filter_frame, text="", variable=self.time_filter_type_var, value="month")
+        month_radio.pack(side=tk.LEFT)
+        month_entry = ttk.Entry(time_filter_frame, textvariable=self.month_value_var, width=3)
+        month_entry.pack(side=tk.LEFT)
+        ttk.Label(time_filter_frame, text="个月").pack(side=tk.LEFT, padx=(0, 10))
+        
+        # 所有视频选项
+        all_radio = ttk.Radiobutton(time_filter_frame, text="所有视频", variable=self.time_filter_type_var, value="all")
+        all_radio.pack(side=tk.LEFT)
 
         # 下载路径设置
         ttk.Label(self.config_frame, text="下载路径:").grid(row=2, column=0, sticky=tk.W, padx=(0, 5), pady=(2, 0))
@@ -1184,9 +1239,26 @@ class DouyinMonitor:
             self.config['cookie'] = self.cookie_var.get()
             self.config['check_interval'] = int(self.interval_var.get())
             self.config['download_path'] = download_path
-            # 保存时间过滤设置（可以为空字符串）
-            time_filter_str = self.time_filter_var.get().strip()
-            self.config['video_time_filter'] = time_filter_str if time_filter_str else ""
+            # 保存时间过滤设置
+            time_filter_type = self.time_filter_type_var.get()
+            self.config['time_filter_type'] = time_filter_type
+            
+            # 计算时间过滤分钟数
+            if time_filter_type == 'hour':
+                time_filter_value = int(self.hour_value_var.get())
+                self.config['time_filter_value'] = time_filter_value
+                self.config['video_time_filter'] = str(time_filter_value * 60)
+            elif time_filter_type == 'day':
+                time_filter_value = int(self.day_value_var.get())
+                self.config['time_filter_value'] = time_filter_value
+                self.config['video_time_filter'] = str(time_filter_value * 24 * 60)
+            elif time_filter_type == 'month':
+                time_filter_value = int(self.month_value_var.get())
+                self.config['time_filter_value'] = time_filter_value
+                self.config['video_time_filter'] = str(time_filter_value * 30 * 24 * 60)
+            else:  # all
+                self.config['time_filter_value'] = 0
+                self.config['video_time_filter'] = '0'
             self.config['use_proxy'] = self.use_proxy_var.get()
             self.config['proxy_url'] = self.proxy_var.get()
             self.update_homepage_config()
