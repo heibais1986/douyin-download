@@ -259,58 +259,65 @@ class Request(object):
 
         # 设置Node的模块查找环境变量（关键，让Node能找到内置的jsdom）
         os.environ["NODE_PATH"] = NODE_MODULES_PATH
-        # 可选：指定execjs使用Node引擎（避免默认用其他JS引擎导致不兼容）
-        node_env = execjs.get(execjs.runtime_names.Node)
-        
-        url = f'{self.HOST}{uri}'
-        params = self.get_params(params)
-        # 尝试获取签名，如果失败则不添加签名参数
-        sign = self.get_sign(uri, params)  # 这里调用的是返回str的get_sign方法
-        if sign:
-            params["a_bogus"] = sign
-        
-        # 动态设置Referer
-        headers = self.HEADERS.copy()
-        if '/search/' in uri:
-            headers['referer'] = 'https://www.douyin.com/search/'
-        elif '/user/profile/other/' in uri:
-            params['timestamp'] = str(int(time.time()))
-            encoded_params_string = urllib.parse.urlencode(params)
-            url1 = url + '?' + encoded_params_string 
-            # 使用资源路径查找JS文件（支持打包环境）
-            import sys
-            possible_js_paths = []
+        # 保存当前工作目录并切换到node_modules目录（确保Node.js能正确解析模块）
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(NODE_MODULES_PATH)
+            # 可选：指定execjs使用Node引擎（避免默认用其他JS引擎导致不兼容）
+            node_env = execjs.get(execjs.runtime_names.Node)
 
-            # 1. 开发环境路径
-            possible_js_paths.append(os.path.join(os.path.dirname(__file__), 'js', '8.动态url测试.js'))
+            url = f'{self.HOST}{uri}'
+            params = self.get_params(params)
+            # 尝试获取签名，如果失败则不添加签名参数
+            sign = self.get_sign(uri, params)  # 这里调用的是返回str的get_sign方法
+            if sign:
+                params["a_bogus"] = sign
 
-            # 2. 打包环境路径
-            if getattr(sys, 'frozen', False):
-                # PyInstaller环境
-                if hasattr(sys, '_MEIPASS'):
-                    possible_js_paths.append(os.path.join(sys._MEIPASS, 'lib', 'js', '8.动态url测试.js'))
+            # 动态设置Referer
+            headers = self.HEADERS.copy()
+            if '/search/' in uri:
+                headers['referer'] = 'https://www.douyin.com/search/'
+            elif '/user/profile/other/' in uri:
+                params['timestamp'] = str(int(time.time()))
+                encoded_params_string = urllib.parse.urlencode(params)
+                url1 = url + '?' + encoded_params_string
+                # 使用资源路径查找JS文件（支持打包环境）
+                import sys
+                possible_js_paths = []
 
-                # Nuitka环境 - 使用可执行文件目录
-                exe_dir = os.path.dirname(os.path.abspath(sys.executable))
-                possible_js_paths.append(os.path.join(exe_dir, 'lib', 'js', '8.动态url测试.js'))
-                possible_js_paths.append(os.path.join(exe_dir, 'js', '8.动态url测试.js'))
+                # 1. 开发环境路径
+                possible_js_paths.append(os.path.join(os.path.dirname(__file__), 'js', '8.动态url测试.js'))
 
-            # 尝试找到存在的JS文件路径
-            js_file_path = None
-            for path in possible_js_paths:
-                if os.path.exists(path):
-                    js_file_path = path
-                    logger.info(f"找到JS文件路径: {js_file_path}")
-                    break
+                # 2. 打包环境路径
+                if getattr(sys, 'frozen', False):
+                    # PyInstaller环境
+                    if hasattr(sys, '_MEIPASS'):
+                        possible_js_paths.append(os.path.join(sys._MEIPASS, 'lib', 'js', '8.动态url测试.js'))
 
-            if js_file_path is None:
-                logger.warning(f"未找到JS文件，尝试的路径: {possible_js_paths}")
-                # 使用第一个路径作为fallback
-                js_file_path = possible_js_paths[0]
-            
-            a_bogus = node_env.compile(open(js_file_path, 'r', encoding='utf-8').read()).call('get_a_bogus', url1)
-            params['a_bogus'] = a_bogus
-            headers['referer'] = f'https://www.douyin.com/user/{params.get("sec_user_id", "")}?from_tab_name=main'
+                    # Nuitka环境 - 使用可执行文件目录
+                    exe_dir = os.path.dirname(os.path.abspath(sys.executable))
+                    possible_js_paths.append(os.path.join(exe_dir, 'lib', 'js', '8.动态url测试.js'))
+                    possible_js_paths.append(os.path.join(exe_dir, 'js', '8.动态url测试.js'))
+
+                # 尝试找到存在的JS文件路径
+                js_file_path = None
+                for path in possible_js_paths:
+                    if os.path.exists(path):
+                        js_file_path = path
+                        logger.info(f"找到JS文件路径: {js_file_path}")
+                        break
+
+                if js_file_path is None:
+                    logger.warning(f"未找到JS文件，尝试的路径: {possible_js_paths}")
+                    # 使用第一个路径作为fallback
+                    js_file_path = possible_js_paths[0]
+
+                a_bogus = node_env.compile(open(js_file_path, 'r', encoding='utf-8').read()).call('get_a_bogus', url1)
+                params['a_bogus'] = a_bogus
+                headers['referer'] = f'https://www.douyin.com/user/{params.get("sec_user_id", "")}?from_tab_name=main'
+        finally:
+            # 恢复原始工作目录
+            os.chdir(original_cwd)
         # 记录API调用详情
         # encoded_params_string = urllib.parse.urlencode(params)
         # url = url + '?' + encoded_params_string 
