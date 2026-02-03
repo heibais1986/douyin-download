@@ -38,7 +38,7 @@ jobs:
     - name: Build with Nuitka (Production)
       run: |
         python -m nuitka `
-          --onefile `
+          --standalone `
           --assume-yes-for-downloads `
           --output-dir=dist `
           --output-filename=douyin_download `
@@ -63,7 +63,7 @@ jobs:
     - name: Build with Nuitka (Debug)
       run: |
         python -m nuitka `
-          --onefile `
+          --standalone `
           --assume-yes-for-downloads `
           --output-dir=dist `
           --output-filename=douyin_download_debug `
