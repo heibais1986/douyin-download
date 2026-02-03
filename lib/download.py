@@ -14,19 +14,36 @@ def download(path, aria2_conf):
         return
 
     # 检查aria2c可执行文件是否存在（支持打包环境）
-    # 首先尝试PyInstaller打包后的临时目录
-    if hasattr(sys, '_MEIPASS'):
-        aria2c_path = os.path.join(sys._MEIPASS, 'aria2c')
-    else:
-        # 开发环境，从项目根目录查找
-        script_dir = os.path.dirname(os.path.dirname(__file__))
-        aria2c_path = os.path.join(script_dir, 'aria2c')
+    possible_aria2c_paths = []
 
+    # 1. 开发环境路径
+    script_dir = os.path.dirname(os.path.dirname(__file__))
+    possible_aria2c_paths.append(os.path.join(script_dir, 'aria2c'))
+
+    # 2. 打包环境路径
+    if getattr(sys, 'frozen', False):
+        # PyInstaller环境
+        if hasattr(sys, '_MEIPASS'):
+            possible_aria2c_paths.append(os.path.join(sys._MEIPASS, 'aria2c'))
+
+        # Nuitka环境 - 使用可执行文件目录
+        exe_dir = os.path.dirname(os.path.abspath(sys.executable))
+        possible_aria2c_paths.append(os.path.join(exe_dir, 'aria2c'))
+
+    # 添加.exe扩展名（Windows系统）
     if os.name == 'nt':  # Windows系统
-        aria2c_path += '.exe'
-    
-    if not os.path.exists(aria2c_path):
-        logger.warning(f'未找到aria2c下载器: {aria2c_path}')
+        possible_aria2c_paths = [path + '.exe' for path in possible_aria2c_paths]
+
+    # 尝试找到存在的aria2c路径
+    aria2c_path = None
+    for path in possible_aria2c_paths:
+        if os.path.exists(path):
+            aria2c_path = path
+            logger.info(f"找到aria2c路径: {aria2c_path}")
+            break
+
+    if aria2c_path is None:
+        logger.warning(f'未找到aria2c下载器，尝试的路径: {possible_aria2c_paths}')
         logger.info('请从 https://github.com/aria2/aria2/releases 下载aria2c并放置到项目根目录')
         logger.info(f'或者手动使用以下命令下载:')
         logger.info(f'aria2c -c --console-log-level warn -d "{path}" -i "{aria2_conf}"')

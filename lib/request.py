@@ -225,10 +225,38 @@ class Request(object):
     def getJSON(self, uri: str, params: dict, data: dict = None, max_retries: int = 3):
         import time
         import urllib.parse
-        # 获取当前Python脚本的绝对目录（打包后会指向可执行文件的资源目录）
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        # 拼接node_modules的绝对路径
-        NODE_MODULES_PATH = os.path.join(BASE_DIR, "node_modules")
+        import sys
+
+        # 获取node_modules的正确路径（支持开发环境、PyInstaller和Nuitka）
+        possible_node_paths = []
+
+        # 1. 开发环境路径
+        possible_node_paths.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "node_modules"))
+        possible_node_paths.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "node_modules"))
+
+        # 2. 打包环境路径
+        if getattr(sys, 'frozen', False):
+            # PyInstaller环境
+            if hasattr(sys, '_MEIPASS'):
+                possible_node_paths.append(os.path.join(sys._MEIPASS, "node_modules"))
+
+            # Nuitka环境 - 使用可执行文件目录
+            exe_dir = os.path.dirname(os.path.abspath(sys.executable))
+            possible_node_paths.append(os.path.join(exe_dir, "node_modules"))
+
+        # 尝试找到存在的node_modules路径
+        NODE_MODULES_PATH = None
+        for path in possible_node_paths:
+            if os.path.exists(path):
+                NODE_MODULES_PATH = path
+                logger.info(f"找到node_modules路径: {NODE_MODULES_PATH}")
+                break
+
+        if NODE_MODULES_PATH is None:
+            logger.warning(f"未找到node_modules目录，尝试的路径: {possible_node_paths}")
+            # 使用第一个路径作为fallback
+            NODE_MODULES_PATH = possible_node_paths[0]
+
         # 设置Node的模块查找环境变量（关键，让Node能找到内置的jsdom）
         os.environ["NODE_PATH"] = NODE_MODULES_PATH
         # 可选：指定execjs使用Node引擎（避免默认用其他JS引擎导致不兼容）
@@ -251,12 +279,34 @@ class Request(object):
             url1 = url + '?' + encoded_params_string 
             # 使用资源路径查找JS文件（支持打包环境）
             import sys
-            if hasattr(sys, '_MEIPASS'):
-                # PyInstaller打包环境
-                js_file_path = os.path.join(sys._MEIPASS, 'lib', 'js', '8.动态url测试.js')
-            else:
-                # 开发环境，从lib/js目录查找
-                js_file_path = os.path.join(os.path.dirname(__file__), 'js', '8.动态url测试.js')
+            possible_js_paths = []
+
+            # 1. 开发环境路径
+            possible_js_paths.append(os.path.join(os.path.dirname(__file__), 'js', '8.动态url测试.js'))
+
+            # 2. 打包环境路径
+            if getattr(sys, 'frozen', False):
+                # PyInstaller环境
+                if hasattr(sys, '_MEIPASS'):
+                    possible_js_paths.append(os.path.join(sys._MEIPASS, 'lib', 'js', '8.动态url测试.js'))
+
+                # Nuitka环境 - 使用可执行文件目录
+                exe_dir = os.path.dirname(os.path.abspath(sys.executable))
+                possible_js_paths.append(os.path.join(exe_dir, 'lib', 'js', '8.动态url测试.js'))
+                possible_js_paths.append(os.path.join(exe_dir, 'js', '8.动态url测试.js'))
+
+            # 尝试找到存在的JS文件路径
+            js_file_path = None
+            for path in possible_js_paths:
+                if os.path.exists(path):
+                    js_file_path = path
+                    logger.info(f"找到JS文件路径: {js_file_path}")
+                    break
+
+            if js_file_path is None:
+                logger.warning(f"未找到JS文件，尝试的路径: {possible_js_paths}")
+                # 使用第一个路径作为fallback
+                js_file_path = possible_js_paths[0]
             
             a_bogus = node_env.compile(open(js_file_path, 'r', encoding='utf-8').read()).call('get_a_bogus', url1)
             params['a_bogus'] = a_bogus
