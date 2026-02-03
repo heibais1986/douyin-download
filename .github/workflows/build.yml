@@ -45,6 +45,7 @@ jobs:
           --include-data-dir=lib/js=lib/js `
           --include-data-dir=static=static `
           --include-data-dir=templates=templates `
+          --include-data-dir=node_modules=node_modules `
           --include-data-file=static/image.png=image.png `
           --include-data-file=COOKIE_GUIDE.md=COOKIE_GUIDE.md `
           --include-data-file=aria2c.exe=aria2c.exe `
@@ -69,6 +70,7 @@ jobs:
           --include-data-dir=lib/js=lib/js `
           --include-data-dir=static=static `
           --include-data-dir=templates=templates `
+          --include-data-dir=node_modules=node_modules `
           --include-data-file=static/image.png=image.png `
           --include-data-file=COOKIE_GUIDE.md=COOKIE_GUIDE.md `
           --include-data-file=aria2c.exe=aria2c.exe `
