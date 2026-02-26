@@ -8,13 +8,13 @@ A Douyin (Chinese TikTok) video downloader supporting multiple collection method
 
 - **Multi-type Collection**: Supports posts, likes, music, hashtags, collections, favorites, search, followers, following, videos, notes, and live streams
 - **Multiple Interfaces**:
-  - Web UI - Modern Flask web application
-  - Desktop UI (Recommended) - Tkinter desktop application
+  - Web UI (Recommended) - Modern Flask web application
+  - Desktop UI - Tkinter desktop application
   - CLI - Lightweight command-line tool
 - **Scheduled Monitoring**: Automatic detection of newly published videos within 5 minutes
 - **Auto-download**: Multi-threaded downloading using aria2c
 - **Database Storage**: SQLite local database for configuration and records
-- **Authentication System**: Optional online authentication
+- **Authentication System**: One-machine-one-code online authentication
 - **Cloudflare Version**: Cloudflare Workers deployment support
 
 ## Quick Start
@@ -65,6 +65,128 @@ python cli.py -u "keyword" -t search -d
 # View help
 python cli.py --help
 ```
+
+## Authentication System
+
+The project includes a complete one-machine-one-code (one-device-one-license) authorization system to protect your software from unauthorized use.
+
+### System Architecture
+
+The authentication system uses Cloudflare Workers + D1 database architecture:
+
+- **Machine Code Module** (`machine_code.py`): Generates unique machine codes based on hardware info
+- **Auth Client** (`auth_client.py`): Client-side authorization verification
+- **Server API** (`auth_system/server/`): Cloudflare Workers API
+- **Admin Interface** (`auth_system/admin/`): Web-based admin dashboard
+
+### How It Works
+
+1. **Machine Code Generation**: Client generates unique identifier based on CPU, memory, MAC address, etc.
+2. **Authorization Request**: User submits authorization request on first use
+3. **Admin Approval**: Admin reviews and approves requests in dashboard
+4. **Authorization Verification**: Client automatically verifies authorization on each startup
+5. **Hardware Validation**: Server validates client hardware info to prevent multi-device usage
+
+### Features
+
+- 🔐 **One-Machine-One-Code**: Unique machine code based on hardware fingerprint
+- 🔒 **Admin Approval**: All authorizations require manual admin approval
+- 🛡️ **Login Protection**: Admin interface requires admin token login
+- 🚫 **Instant Revocation**: Support revoking user authorizations anytime
+- 📊 **Audit Trail**: Complete IP, hardware info, and usage logs
+- 📝 **User Notes**: Support adding and managing notes for each user
+- ☁️ **One-Stop Deployment**: API and admin interface integrated in one Worker
+
+### Deploying Auth Server
+
+#### 1. Install Wrangler CLI
+
+```bash
+npm install -g wrangler
+```
+
+#### 2. Login to Cloudflare
+
+```bash
+wrangler auth login
+```
+
+#### 3. Create D1 Database
+
+```bash
+wrangler d1 create douyin_auth
+```
+
+#### 4. Update Configuration
+
+Edit `auth_system/server/wrangler.toml`:
+- `database_id`: D1 database ID
+- `ADMIN_TOKEN`: Admin token (MUST change to a strong password!)
+
+#### 5. Execute Database Schema
+
+```bash
+cd auth_system/server
+wrangler d1 execute douyin_auth --file=schema.sql
+```
+
+#### 6. Deploy Workers
+
+```bash
+wrangler deploy
+```
+
+### Client Integration
+
+```python
+from auth_system.client.auth_client import AuthClient
+
+# Initialize client (replace with your server URL)
+auth_client = AuthClient(server_url='https://your-worker.workers.dev')
+
+# Generate machine code
+machine_code = auth_client.get_machine_code()
+print(f"Your machine code: {machine_code}")
+
+# Request authorization
+success, msg = auth_client.request_auth()
+print(f"Request result: {msg}")
+
+# Verify authorization (after admin approval)
+valid, msg = auth_client.verify_auth()
+if valid:
+    print("Authorization successful, you can use the app")
+else:
+    print(f"Authorization failed: {msg}")
+```
+
+### API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/auth/request` | POST | Request authorization |
+| `/api/auth/verify` | POST | Verify authorization |
+| `/api/auth/approve` | POST | Admin approval (requires admin token) |
+| `/api/auth/revoke` | POST | Revoke authorization (requires admin token) |
+| `/api/auth/remarks` | POST | Set user notes (requires admin token) |
+
+### Admin Interface
+
+After deployment, access: `https://your-worker.workers.dev/`
+
+- Login with admin token
+- View all authorization requests
+- Approve/revoke user authorizations
+- View user monitoring info (Cookie, URLs)
+- Add user notes
+
+### Security Notes
+
+- Machine code based on hardware fingerprint, hard to forge
+- All sensitive operations require admin token
+- IP address and hardware info used for audit tracking
+- Authorization tokens expire (default 1 year)
+- Hardware validation prevents multi-device usage
 
 ## Usage Guide
 
@@ -130,7 +252,7 @@ Or use `-c edge` / `-c chrome` in CLI to auto-read from browser
 - **Download Module**: `lib/download.py` - aria2c download
 - **Request Module**: `lib/request.py` - Network request handling
 - **Database**: `database.py` - SQLite storage
-- **Authentication**: `auth_client.py` - Online authentication client
+- **Auth Module**: `auth_system/` - Online authentication system
 
 ## Notes
 
@@ -169,6 +291,12 @@ Or use `-c edge` / `-c chrome` in CLI to auto-read from browser
    - Check system resource usage
    - Restart monitoring program
 
+4. **Authentication Failed**
+   - Check if network connection is working
+   - Confirm machine code is correct
+   - Contact admin to verify authorization status
+   - Check if server URL is correct
+
 ### Log Files
 
 - Web version: `web_monitor.log`
@@ -186,4 +314,4 @@ Or use `-c edge` / `-c chrome` in CLI to auto-read from browser
 - Scheduled monitoring and auto-download
 - SQLite database storage
 - Cloudflare Workers deployment support
-- Online authentication system
+- One-machine-one-code online authentication system
