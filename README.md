@@ -1,21 +1,39 @@
-# 抖音个人主页监控器使用说明
+# 抖音下载器 (douyidou-download)
 
-## 功能介绍
+## 项目介绍
 
-本监控器提供两种界面：
-1. **Web界面** (推荐) - 现代化的浏览器界面
-2. **桌面界面** - 传统的Tkinter桌面应用
+抖音视频下载器，支持多种采集方式（主页作品、喜欢、音乐、话题、搜索、关注、粉丝、合集、收藏、视频、图文、直播），可定时监控个人主页并自动下载新视频。
 
-主要功能：
-- 定时监控抖音个人主页
-- 检测5分钟内发布的新视频
-- 自动提示新视频发布
-- 自动下载新发布的视频
-- 支持多个主页同时监控
+## 功能特性
+
+- **多模式采集**：支持主页作品、喜欢列表、音乐、话题、合集、收藏、搜索、关注、粉丝、视频、图文、直播等多种类型
+- **多界面支持**：
+  - Web界面 - 现代化 Flask Web 应用
+  - 桌面界面 (推荐) - Tkinter 桌面应用
+  - CLI命令行 - 轻量级命令行工具
+- **定时监控**：自动检测5分钟内发布的新视频
+- **自动下载**：支持多线程下载，使用 aria2c 进行高速下载
+- **数据库存储**：使用 SQLite 本地数据库存储配置和记录
+- **认证系统**：支持在线认证系统（可选）
+- **Cloudflare版本**：提供 Cloudflare Workers 部署版本
 
 ## 快速开始
 
-### 1. 启动Web界面 (推荐)
+### 环境要求
+
+- Python 3.8+
+- Windows/Linux/MacOS
+- aria2c 下载器（用于视频下载）
+
+### 安装依赖
+
+```bash
+pip install -r requirements.txt
+```
+
+### 启动方式
+
+#### 1. Web界面 (推荐)
 
 ```bash
 python web_monitor.py
@@ -23,30 +41,32 @@ python web_monitor.py
 
 启动后访问：http://localhost:5000
 
-### 2. 启动桌面界面
+#### 2. 桌面界面
 
 ```bash
 python douyin_monitor.py
 ```
 
-## 配置说明
+#### 3. 命令行模式
 
-### Cookie获取
+```bash
+# 采集用户主页作品
+python cli.py -u "https://www.douyin.com/user/MS4wLjABAAAA..." -d
 
-1. 打开浏览器，登录抖音网页版
-2. 按F12打开开发者工具
-3. 切换到Network标签
-4. 刷新页面
-5. 找到任意请求，查看Request Headers
-6. 复制Cookie字段的值
+# 采集喜欢列表
+python cli.py -u "https://www.douyin.com/user/MS4wLjABAAAA..." -t like -d
 
-### 主要配置项
+# 采集音乐
+python cli.py -u "音乐ID" -t music -d
 
-- **Cookie**: 抖音登录凭证，必须配置
-- **检查间隔**: 默认300秒(5分钟)，可根据需要调整
-- **下载路径**: 视频保存位置，默认为"./下载"
+# 搜索视频
+python cli.py -u "关键词" -t search -d
 
-## 使用步骤
+# 查看帮助
+python cli.py --help
+```
+
+## 使用说明
 
 ### Web界面操作
 
@@ -56,29 +76,67 @@ python douyin_monitor.py
    - 点击"保存配置"
 
 2. **添加监控主页**
-   - 在"个人主页管理"区域输入抖音主页URL或用户ID
+   - 输入抖音主页URL或用户ID
    - 点击"添加主页"
    - 支持的格式：
-     - 完整URL: https://www.douyin.com/user/MS4wLjABAAAA...
-     - 用户ID: MS4wLjABAAAA...
+     - 完整URL: `https://www.douyin.com/user/MS4wLjABAAAA...`
+     - 用户ID: `MS4wLjABAAAA...`
 
 3. **开始监控**
    - 点击"开始监控"按钮
    - 系统将每隔设定时间检查一次所有主页
-   - 在"运行日志"区域查看监控状态
 
-4. **查看结果**
-   - 主页列表显示每个主页的监控状态
-   - 发现新视频时会显示通知
-   - 新视频将自动下载到指定目录
+### 命令行参数
 
-### 桌面界面操作
+| 参数 | 说明 |
+|------|------|
+| `-u, --urls` | 作品/账号/话题/音乐等类型的URL链接/ID或搜索关键词，也可输入文件路径 |
+| `-l, --limit` | 限制最大采集数量，默认不限制 |
+| `-d, --download` | 是否下载，默认不下载 |
+| `-t, --type` | 采集类型：`post`(主页作品)、`like`(喜欢)、`music`(音乐)、`hashtag`(话题)、`search`(搜索)、`follow`(关注)、`fans`(粉丝)、`collection`(合集)、`favorite`(收藏)、`video`(视频)、`note`(图文)、`user`(用户)、`live`(直播) |
+| `-p, --path` | 下载文件夹，默认为"下载" |
+| `-c, --cookie` | 已登录账号的cookie |
 
-操作方式与Web界面类似，但使用传统的桌面窗口界面。
+## Cookie获取
+
+### 方法一：通过开发者工具
+
+1. 打开浏览器，登录抖音网页版 (https://www.douyin.com)
+2. 按F12打开开发者工具
+3. 切换到Network（网络）标签
+4. 刷新页面
+5. 找到任意请求，查看Request Headers
+6. 复制Cookie字段的值
+
+### 方法二：自动获取
+
+运行自动Cookie获取工具：
+```bash
+python run_auto_cookie.py
+```
+
+或在命令行使用 `-c edge` / `-c chrome` 参数自动从浏览器读取
+
+## 配置说明
+
+### 主要配置项
+
+- **Cookie**: 抖音登录凭证，必须配置
+- **检查间隔**: 默认300秒(5分钟)
+- **下载路径**: 视频保存位置，默认为"./下载"
+- **代理**: 支持HTTP/SOCKS代理
+
+## 技术架构
+
+- **核心库**: `lib/douyin.py` - 抖音API封装
+- **下载模块**: `lib/download.py` - aria2c下载
+- **请求模块**: `lib/request.py` - 网络请求处理
+- **数据库**: `database.py` - SQLite数据存储
+- **认证**: `auth_client.py` - 在线认证客户端
 
 ## 注意事项
 
-1. **Cookie有效性**
+1. **Cookie时效性**
    - Cookie有时效性，失效后需要重新获取
    - 建议定期更新Cookie
 
@@ -118,18 +176,16 @@ python douyin_monitor.py
 - Web版本：`web_monitor.log`
 - 桌面版本：`monitor.log`
 
-## 技术支持
+## 项目地址
 
-如遇到问题，请：
-1. 查看运行日志
-2. 检查配置是否正确
-3. 确认网络环境正常
-4. 尝试重启程序
+- GitHub: https://github.com/heibais1986/douyin-download
+- 问题反馈: https://github.com/heibais1986/douyin-download/issues
 
-## 更新说明
+## 更新日志
 
-- 支持多主页同时监控
-- 自动检测新视频发布
-- 现代化Web界面
-- 实时状态监控
-- 自动下载功能
+- 支持多类型采集（作品、喜欢、音乐、话题等）
+- 多界面支持（Web、桌面、CLI）
+- 定时监控和自动下载
+- SQLite数据库存储
+- Cloudflare Workers部署支持
+- 在线认证系统
